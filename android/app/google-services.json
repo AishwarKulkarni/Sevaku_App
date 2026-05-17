@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "509131998206",
+    "project_id": "workzy-5dec7",
+    "storage_bucket": "workzy-5dec7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509131998206:android:717a394fde75fce855b6af",
+        "android_client_info": {
+          "package_name": "com.example.workzy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509131998206-ud1s468j7dcafukhgjtsc55hd614qb6m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBmYTjBDhqOaj-NjaHwb6MbGXnWdM_N2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509131998206-ud1s468j7dcafukhgjtsc55hd614qb6m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
