@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sevaku/features/auth/screens/get_started_screen.dart';
 import 'package:sevaku/features/auth/screens/login_screen.dart';
 import 'package:sevaku/features/auth/screens/register_screen.dart';
+import 'package:sevaku/features/auth/screens/forgot_password_screen.dart';
 import 'package:sevaku/features/home/screens/customer_home_screen.dart';
 import 'package:sevaku/features/bookings/screens/bookings_list_screen.dart';
 import 'package:sevaku/features/bookings/screens/booking_flow_screen.dart';
@@ -55,7 +56,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isInit = authState.status == AuthStatus.initial;
       final isGoingToAuth = state.uri.path == '/' ||
           state.uri.path == '/login' ||
-          state.uri.path == '/register';
+          state.uri.path == '/register' ||
+          state.uri.path == '/forgot-password';
 
       if (isInit) return null;
 
@@ -84,6 +86,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
     ),
 
     // Customer Shell

@@ -65,9 +65,19 @@ class AuthService {
     } catch (_) {}
   }
 
-  // Password reset (Not implemented in backend yet)
-  Future<void> sendPasswordReset(String email) async {
-    throw UnimplementedError('Password reset not implemented in custom API yet');
+  // Password reset
+  Future<String?> sendPasswordReset(String email) async {
+    final response = await _restClient.forgotPassword({'email': email});
+    // For dev purposes we might get the OTP back in the response
+    return response['dev_otp'] as String?;
+  }
+
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
+    await _restClient.resetPassword({
+      'email': email,
+      'otp': otp,
+      'new_password': newPassword,
+    });
   }
 
   // Delete account (Needs backend endpoint, placeholder for now)

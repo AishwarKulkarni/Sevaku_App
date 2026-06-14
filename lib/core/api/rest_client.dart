@@ -22,6 +22,12 @@ abstract class RestClient {
   @GET('/auth/me')
   Future<UserModel> getMe();
 
+  @POST('/auth/forgot-password')
+  Future<dynamic> forgotPassword(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/reset-password')
+  Future<dynamic> resetPassword(@Body() Map<String, dynamic> body);
+
   // Workers
   @GET('/workers/')
   Future<List<WorkerModel>> getWorkers({
