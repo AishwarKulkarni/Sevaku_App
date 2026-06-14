@@ -4,7 +4,7 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'Workzy';
+  static const String appName = 'Sevaku';
   static const String appTagline = 'Home services, simplified.';
 
   // Roles

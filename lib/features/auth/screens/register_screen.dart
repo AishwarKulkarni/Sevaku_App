@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workzy/core/constants/app_constants.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/core/widgets/app_button.dart';
-import 'package:workzy/core/widgets/app_text_field.dart';
-import 'package:workzy/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/core/constants/app_constants.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/core/widgets/app_button.dart';
+import 'package:sevaku/core/widgets/app_text_field.dart';
+import 'package:sevaku/features/auth/providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -84,7 +84,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     .animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
                 const SizedBox(height: 4),
                 Text(
-                  'Join Workzy and find the best home services',
+                  'Join Sevaku and find the best home services',
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: BrandColors.textSecondary,
                   ),

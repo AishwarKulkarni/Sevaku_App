@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/models/worker_model.dart';
-import 'package:workzy/core/constants/app_constants.dart';
-import 'package:workzy/core/utils/image_helper.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/models/worker_model.dart';
+import 'package:sevaku/core/constants/app_constants.dart';
+import 'package:sevaku/core/utils/image_helper.dart';
 
 class WorkerCard extends StatelessWidget {
   final WorkerModel worker;

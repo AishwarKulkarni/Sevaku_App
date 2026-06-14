@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
 
 class AppTheme {
   AppTheme._();

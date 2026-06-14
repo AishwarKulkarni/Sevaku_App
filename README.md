@@ -1,4 +1,4 @@
-# workzy
+# sevaku
 
 A new Flutter project.
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/core/widgets/app_button.dart';
-import 'package:workzy/core/widgets/app_logo.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/core/widgets/app_button.dart';
+import 'package:sevaku/core/widgets/app_logo.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});

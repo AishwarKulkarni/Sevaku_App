@@ -10,10 +10,10 @@ import 'package:uuid/uuid.dart';
 class StorageService {
   final _uuid = const Uuid();
 
-  /// Returns the base directory for all Workzy images.
+  /// Returns the base directory for all Sevaku images.
   Future<Directory> _baseDir() async {
     final docs = await getApplicationDocumentsDirectory();
-    final dir = Directory('${docs.path}/workzy');
+    final dir = Directory('${docs.path}/sevaku');
     if (!await dir.exists()) await dir.create(recursive: true);
     return dir;
   }

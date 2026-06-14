@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workzy/features/auth/providers/auth_provider.dart';
-import 'package:workzy/models/booking_model.dart';
-import 'package:workzy/models/chat_model.dart';
-import 'package:workzy/models/review_model.dart';
-import 'package:workzy/models/worker_model.dart';
+import 'package:sevaku/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/models/booking_model.dart';
+import 'package:sevaku/models/chat_model.dart';
+import 'package:sevaku/models/review_model.dart';
+import 'package:sevaku/models/worker_model.dart';
 
 // ─── Workers ────────────────────────────────────────────────────────────
 

@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workzy/core/constants/app_constants.dart';
-import 'package:workzy/models/user_model.dart';
-import 'package:workzy/services/auth_service.dart';
-import 'package:workzy/services/api_service.dart';
-import 'package:workzy/services/storage_service.dart';
+import 'package:sevaku/core/constants/app_constants.dart';
+import 'package:sevaku/models/user_model.dart';
+import 'package:sevaku/services/auth_service.dart';
+import 'package:sevaku/services/api_service.dart';
+import 'package:sevaku/services/storage_service.dart';
 
 // Auth state
 enum AuthStatus { initial, authenticated, unauthenticated }

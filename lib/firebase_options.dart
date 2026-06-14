@@ -44,9 +44,9 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyB1SevvAUwEf3dMYbUYgicaKZknFoasUjA',
     appId: '1:509131998206:web:b0bfd613a6da9ce155b6af',
     messagingSenderId: '509131998206',
-    projectId: 'workzy-5dec7',
-    authDomain: 'workzy-5dec7.firebaseapp.com',
-    storageBucket: 'workzy-5dec7.firebasestorage.app',
+    projectId: 'sevaku-5dec7',
+    authDomain: 'sevaku-5dec7.firebaseapp.com',
+    storageBucket: 'sevaku-5dec7.firebasestorage.app',
     measurementId: 'G-PFPHKBK0NP',
   );
 
@@ -54,37 +54,37 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyDBmYTjBDhqOaj-NjaHwb6MbGXnWdM_N2w',
     appId: '1:509131998206:android:717a394fde75fce855b6af',
     messagingSenderId: '509131998206',
-    projectId: 'workzy-5dec7',
-    storageBucket: 'workzy-5dec7.firebasestorage.app',
+    projectId: 'sevaku-5dec7',
+    storageBucket: 'sevaku-5dec7.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBY469pvVoR237jSKW9x8_VGWOtZghX3WA',
     appId: '1:509131998206:ios:afb3f973281b1d4e55b6af',
     messagingSenderId: '509131998206',
-    projectId: 'workzy-5dec7',
-    storageBucket: 'workzy-5dec7.firebasestorage.app',
+    projectId: 'sevaku-5dec7',
+    storageBucket: 'sevaku-5dec7.firebasestorage.app',
     iosClientId: '509131998206-fvjnn1f4re0edb766rom08cmk3a6fr5b.apps.googleusercontent.com',
-    iosBundleId: 'com.example.workzy',
+    iosBundleId: 'com.example.sevaku',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBY469pvVoR237jSKW9x8_VGWOtZghX3WA',
     appId: '1:509131998206:ios:afb3f973281b1d4e55b6af',
     messagingSenderId: '509131998206',
-    projectId: 'workzy-5dec7',
-    storageBucket: 'workzy-5dec7.firebasestorage.app',
+    projectId: 'sevaku-5dec7',
+    storageBucket: 'sevaku-5dec7.firebasestorage.app',
     iosClientId: '509131998206-fvjnn1f4re0edb766rom08cmk3a6fr5b.apps.googleusercontent.com',
-    iosBundleId: 'com.example.workzy',
+    iosBundleId: 'com.example.sevaku',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyB1SevvAUwEf3dMYbUYgicaKZknFoasUjA',
     appId: '1:509131998206:web:bd1606d900eec01c55b6af',
     messagingSenderId: '509131998206',
-    projectId: 'workzy-5dec7',
-    authDomain: 'workzy-5dec7.firebaseapp.com',
-    storageBucket: 'workzy-5dec7.firebasestorage.app',
+    projectId: 'sevaku-5dec7',
+    authDomain: 'sevaku-5dec7.firebaseapp.com',
+    storageBucket: 'sevaku-5dec7.firebasestorage.app',
     measurementId: 'G-XTGVQ0Z8SM',
   );
 }

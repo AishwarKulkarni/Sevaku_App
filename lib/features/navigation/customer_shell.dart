@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
 
 class CustomerShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;

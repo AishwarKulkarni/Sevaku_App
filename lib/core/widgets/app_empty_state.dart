@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 
 class AppEmptyState extends StatelessWidget {
   final IconData icon;

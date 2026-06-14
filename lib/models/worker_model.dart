@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:workzy/models/user_model.dart';
+import 'package:sevaku/models/user_model.dart';
 
 part 'worker_model.g.dart';
 

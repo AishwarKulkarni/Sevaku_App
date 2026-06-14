@@ -1,4 +1,4 @@
-package com.example.workzy
+package com.example.sevaku
 
 import io.flutter.embedding.android.FlutterActivity
 

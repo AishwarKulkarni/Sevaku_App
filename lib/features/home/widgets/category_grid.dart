@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:workzy/core/constants/app_constants.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
+import 'package:sevaku/core/constants/app_constants.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 
 class CategoryGrid extends StatelessWidget {
   final String? selectedCategory;

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/core/utils/image_helper.dart';
-import 'package:workzy/providers/data_providers.dart';
-import 'package:workzy/core/widgets/app_error_state.dart';
-import 'package:workzy/core/widgets/app_empty_state.dart';
-import 'package:workzy/features/auth/providers/auth_provider.dart';
-import 'package:workzy/models/booking_model.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/core/utils/image_helper.dart';
+import 'package:sevaku/providers/data_providers.dart';
+import 'package:sevaku/core/widgets/app_error_state.dart';
+import 'package:sevaku/core/widgets/app_empty_state.dart';
+import 'package:sevaku/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/models/booking_model.dart';
 
 class WorkerDashboardScreen extends ConsumerWidget {
   const WorkerDashboardScreen({super.key});

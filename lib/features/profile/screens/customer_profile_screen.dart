@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/core/utils/image_helper.dart';
-import 'package:workzy/core/widgets/app_button.dart';
-import 'package:workzy/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/core/utils/image_helper.dart';
+import 'package:sevaku/core/widgets/app_button.dart';
+import 'package:sevaku/features/auth/providers/auth_provider.dart';
 
 class CustomerProfileScreen extends ConsumerWidget {
   const CustomerProfileScreen({super.key});
@@ -158,7 +158,7 @@ class CustomerProfileScreen extends ConsumerWidget {
             ).animate().fadeIn(delay: 500.ms).slideX(begin: -0.05),
             _ProfileMenuItem(
               icon: Icons.info_outline,
-              title: 'About Workzy',
+              title: 'About Sevaku',
               onTap: () {},
             ).animate().fadeIn(delay: 550.ms).slideX(begin: -0.05),
 
@@ -186,7 +186,7 @@ class CustomerProfileScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             Text(
-              'Workzy v1.0.0',
+              'Sevaku v1.0.0',
               style: AppTextStyles.caption,
             ),
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workzy/core/utils/image_helper.dart';
-import 'package:workzy/core/theme/brand_colors.dart';
-import 'package:workzy/core/theme/text_styles.dart';
-import 'package:workzy/core/constants/app_constants.dart';
+import 'package:sevaku/core/utils/image_helper.dart';
+import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
+import 'package:sevaku/core/constants/app_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workzy/core/widgets/app_button.dart';
-import 'package:workzy/providers/data_providers.dart';
-import 'package:workzy/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/core/widgets/app_button.dart';
+import 'package:sevaku/providers/data_providers.dart';
+import 'package:sevaku/features/auth/providers/auth_provider.dart';
 
 class WorkerProfileScreen extends ConsumerStatefulWidget {
   final String workerId;

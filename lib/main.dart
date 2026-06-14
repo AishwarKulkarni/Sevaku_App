@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workzy/core/theme/app_theme.dart';
-import 'package:workzy/firebase_options.dart';
-import 'package:workzy/router/app_router.dart';
+import 'package:sevaku/core/theme/app_theme.dart';
+import 'package:sevaku/firebase_options.dart';
+import 'package:sevaku/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
