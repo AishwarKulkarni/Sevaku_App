@@ -23,7 +23,7 @@ abstract class RestClient {
   Future<UserModel> getMe();
 
   // Workers
-  @GET('/workers')
+  @GET('/workers/')
   Future<List<WorkerModel>> getWorkers({
     @Query('category') String? category,
     @Query('query') String? query,
@@ -34,10 +34,10 @@ abstract class RestClient {
   Future<WorkerModel> getWorker(@Path('worker_id') String workerId);
 
   // Bookings
-  @POST('/bookings')
+  @POST('/bookings/')
   Future<BookingModel> createBooking(@Body() Map<String, dynamic> body);
 
-  @GET('/bookings')
+  @GET('/bookings/')
   Future<List<BookingModel>> getBookings({@Query('status') String? status});
 
   @PATCH('/bookings/{booking_id}/status')
@@ -53,7 +53,7 @@ abstract class RestClient {
   );
 
   // Reviews
-  @POST('/reviews')
+  @POST('/reviews/')
   Future<ReviewModel> createReview(@Body() Map<String, dynamic> body);
 
   @GET('/reviews/worker/{worker_id}')
@@ -62,7 +62,7 @@ abstract class RestClient {
   );
 
   // Chat
-  @GET('/chat')
+  @GET('/chat/')
   Future<List<ChatModel>> getChats();
 
   @POST('/chat/with/{other_user_id}')

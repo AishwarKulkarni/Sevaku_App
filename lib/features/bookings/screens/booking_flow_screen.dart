@@ -10,6 +10,7 @@ import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/models/booking_model.dart';
+import 'package:sevaku/providers/location_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingFlowScreen extends ConsumerStatefulWidget {
@@ -338,6 +339,27 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                   controller: _addressController,
                   hintText: 'Enter your address',
                   prefixIcon: Icons.location_on_outlined,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.my_location, color: BrandColors.primaryGreen),
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Fetching your location...'), duration: Duration(seconds: 1)),
+                        );
+                        final service = ref.read(locationServiceProvider);
+                        final address = await service.getCurrentAddress();
+                        if (address != null && mounted) {
+                          _addressController.text = address;
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Could not fetch location: $e')),
+                          );
+                        }
+                      }
+                    },
+                  ),
                   maxLines: 2,
                 ).animate().fadeIn(delay: 550.ms),
 

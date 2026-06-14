@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sevaku/core/theme/brand_colors.dart';
 import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
-import 'package:sevaku/core/widgets/app_logo.dart';
 import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 
@@ -51,7 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: const Color.fromRGBO(20, 20, 20, 1),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -157,41 +156,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 24),
 
-                // Or divider
-                Row(
-                  children: [
-                    const Expanded(child: Divider(color: BrandColors.divider)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'or continue with',
-                        style: AppTextStyles.caption,
-                      ),
-                    ),
-                    const Expanded(child: Divider(color: BrandColors.divider)),
-                  ],
-                ).animate().fadeIn(delay: 700.ms),
+                // // Or divider
+                // Row(
+                //   children: [
+                //     const Expanded(child: Divider(color: BrandColors.divider)),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(horizontal: 16),
+                //       child: Text(
+                //         'or continue with',
+                //         style: AppTextStyles.caption,
+                //       ),
+                //     ),
+                //     const Expanded(child: Divider(color: BrandColors.divider)),
+                //   ],
+                // ).animate().fadeIn(delay: 700.ms),
 
-                const SizedBox(height: 24),
+                // const SizedBox(height: 24),
 
-                // Google Sign In
-                AppButton(
-                  onTap: () {
-                    ref.read(authProvider.notifier).signInWithGoogle();
-                  },
-                  isOutlined: true,
-                  width: double.infinity,
-                  height: 54,
-                  icon: Icons.g_mobiledata_rounded,
-                  child: Text(
-                    'Google',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 800.ms),
+                // // Google Sign In
+                // AppButton(
+                //   onTap: () {
+                //     ref.read(authProvider.notifier).signInWithGoogle();
+                //   },
+                //   isOutlined: true,
+                //   width: double.infinity,
+                //   height: 54,
+                //   icon: Icons.g_mobiledata_rounded,
+                //   child: Text(
+                //     'Google',
+                //     style: AppTextStyles.bodyMedium.copyWith(
+                //       fontWeight: FontWeight.w500,
+                //     ),
+                //   ),
+                // ).animate().fadeIn(delay: 800.ms),
 
-                const SizedBox(height: 32),
+                // const SizedBox(height: 32),
 
                 // Register link
                 Center(

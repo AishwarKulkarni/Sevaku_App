@@ -8,6 +8,7 @@ import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/features/workers/widgets/worker_card.dart';
 import 'package:sevaku/providers/data_providers.dart';
+import 'package:sevaku/providers/location_provider.dart';
 import 'package:sevaku/core/widgets/app_empty_state.dart';
 import 'package:sevaku/core/widgets/app_error_state.dart';
 
@@ -20,6 +21,14 @@ class CustomerHomeScreen extends ConsumerStatefulWidget {
 
 class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
   final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentLocationProvider.notifier).fetchLocation();
+    });
+  }
 
   @override
   void dispose() {
@@ -75,10 +84,19 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  user?.city ?? 'your location',
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: BrandColors.textMuted,
+                                Expanded(
+                                  child: Consumer(
+                                    builder: (context, ref, child) {
+                                      final addressAsync = ref.watch(currentAddressProvider);
+                                      return Text(
+                                        addressAsync.value ?? user?.city ?? 'fetching location...',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: BrandColors.textMuted,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
