@@ -56,12 +56,36 @@ class WorkerCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    BrandColors.shadeBlack.withValues(alpha: 0.9),
-                  ],
+                  colors: [Colors.transparent, BrandColors.shadeBlack],
                   stops: const [0.3, 1.0],
                 ),
+              ),
+            ),
+
+            Container(
+              margin: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: BrandColors.white,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.star_rounded,
+                    color: BrandColors.starYellow,
+                    size: 12,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    worker.rating.toStringAsFixed(1),
+                    style: AppTextStyles.rating.copyWith(
+                      fontSize: 10,
+                      color: BrandColors.shadeBlack,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -119,7 +143,7 @@ class WorkerCard extends StatelessWidget {
                                     child: Text(
                                       'Available',
                                       style: AppTextStyles.caption.copyWith(
-                                        color: BrandColors.success,
+                                        color: BrandColors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                       ),
@@ -130,20 +154,6 @@ class WorkerCard extends StatelessWidget {
                             const SizedBox(height: 6),
                             Row(
                               children: [
-                                const Icon(
-                                  Icons.star_rounded,
-                                  color: BrandColors.starYellow,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  worker.rating.toStringAsFixed(1),
-                                  style: AppTextStyles.rating.copyWith(
-                                    fontSize: 13,
-                                    color: BrandColors.white,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
                                 Text(
                                   '(${worker.reviewCount})',
                                   style: AppTextStyles.caption.copyWith(
@@ -165,9 +175,9 @@ class WorkerCard extends StatelessWidget {
                                 ),
                                 Spacer(),
                                 Text(
-                                  '₹${worker.hourlyRate.toInt()}/hr',
+                                  '₹${worker.hourlyRate.toInt()}hr',
                                   style: AppTextStyles.price.copyWith(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: BrandColors.white,
                                   ),
                                 ),
@@ -217,12 +227,36 @@ class WorkerCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    BrandColors.shadeBlack.withValues(alpha: 0.9),
-                  ],
+                  colors: [Colors.transparent, BrandColors.shadeBlack],
                   stops: const [0.4, 1.0],
                 ),
+              ),
+            ),
+
+            Container(
+              margin: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: BrandColors.white,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.star_rounded,
+                    color: BrandColors.starYellow,
+                    size: 12,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    worker.rating.toStringAsFixed(1),
+                    style: AppTextStyles.rating.copyWith(
+                      fontSize: 10,
+                      color: BrandColors.shadeBlack,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -243,24 +277,6 @@ class WorkerCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        color: BrandColors.starYellow,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        worker.rating.toStringAsFixed(1),
-                        style: AppTextStyles.rating.copyWith(
-                          fontSize: 11,
-                          color: BrandColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
                   Text(
                     worker.name,
                     style: AppTextStyles.labelLarge.copyWith(
@@ -333,7 +349,7 @@ class WorkerCard extends StatelessWidget {
           .firstWhere((c) => c.id == worker.category)
           .color;
     } catch (_) {
-      return BrandColors.primaryGreen;
+      return BrandColors.white;
     }
   }
 }

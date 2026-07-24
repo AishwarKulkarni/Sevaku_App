@@ -10,6 +10,7 @@ import 'package:sevaku/core/widgets/app_error_state.dart';
 import 'package:sevaku/core/widgets/app_empty_state.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/models/booking_model.dart';
+import 'package:sevaku/core/widgets/section_header.dart';
 
 class WorkerDashboardScreen extends ConsumerWidget {
   const WorkerDashboardScreen({super.key});
@@ -35,47 +36,47 @@ class WorkerDashboardScreen extends ConsumerWidget {
             .toList();
 
         final totalJobs = completedBookings.length;
+        final upcomingEst = bookings
+            .where((b) => b.status == 'accepted' || b.status == 'pending')
+            .fold<double>(0, (sum, b) => sum + b.totalAmount);
 
         final now = DateTime.now();
         final thisMonthEarnings = completedBookings
             .where(
               (b) =>
-                  b.scheduledDate.year == now.year &&
-                  b.scheduledDate.month == now.month,
+                  b.scheduledDate.toLocal().year == now.year &&
+                  b.scheduledDate.toLocal().month == now.month,
             )
             .fold<double>(0, (sum, b) => sum + b.totalAmount);
 
         final rating =
             workerAsync.valueOrNull?.rating.toStringAsFixed(1) ?? '0.0';
 
-        // Calculate earnings for the last 7 days for the chart
+        // Calculate earnings for the current month broken down into 4 weeks
         final barItems = <_BarItem>[];
-        double maxDaily = 0;
-        final dailyEarnings = List.filled(7, 0.0);
+        final weeklyEarnings = List.filled(4, 0.0);
+        double maxWeekly = 0;
 
-        for (int i = 6; i >= 0; i--) {
-          final day = now.subtract(Duration(days: i));
-          final dayBookings = completedBookings.where(
-            (b) =>
-                b.scheduledDate.year == day.year &&
-                b.scheduledDate.month == day.month &&
-                b.scheduledDate.day == day.day,
-          );
-          final earned = dayBookings.fold<double>(
-            0,
-            (sum, b) => sum + b.totalAmount,
-          );
-          dailyEarnings[6 - i] = earned;
-          if (earned > maxDaily) maxDaily = earned;
+        for (final b in completedBookings) {
+          final localDate = b.scheduledDate.toLocal();
+          if (localDate.year == now.year && localDate.month == now.month) {
+            int weekIndex = (localDate.day - 1) ~/ 7;
+            if (weekIndex > 3) weekIndex = 3; // Days 22-31 go into the 4th week
+            weeklyEarnings[weekIndex] += b.totalAmount;
+          }
         }
 
-        final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        for (int i = 0; i < 7; i++) {
-          final date = now.subtract(Duration(days: 6 - i));
-          final dayName = dayNames[date.weekday - 1]; // weekday is 1-7
-          final heightRatio = maxDaily > 0 ? dailyEarnings[i] / maxDaily : 0.05;
+        for (double earned in weeklyEarnings) {
+          if (earned > maxWeekly) maxWeekly = earned;
+        }
+
+        final weekNames = ['W1', 'W2', 'W3', 'W4'];
+        for (int i = 0; i < 4; i++) {
+          final heightRatio = maxWeekly > 0
+              ? weeklyEarnings[i] / maxWeekly
+              : 0.05;
           barItems.add(
-            _BarItem(dayName, heightRatio == 0 ? 0.05 : heightRatio),
+            _BarItem(weekNames[i], heightRatio == 0 ? 0.05 : heightRatio),
           );
         }
 
@@ -87,121 +88,140 @@ class WorkerDashboardScreen extends ConsumerWidget {
               backgroundColor: BrandColors.lightGray,
               onRefresh: () async {
                 ref.invalidate(workerBookingsProvider);
-                if (user != null) ref.invalidate(workerProfileProvider(user.uid));
-                
+                if (user != null) {
+                  ref.invalidate(workerProfileProvider(user.uid));
+                }
+
                 await Future.wait([
                   ref.read(workerBookingsProvider.future),
-                  if (user != null) ref.read(workerProfileProvider(user.uid).future),
+                  if (user != null)
+                    ref.read(workerProfileProvider(user.uid).future),
                 ]);
               },
               child: CustomScrollView(
                 slivers: [
-                // Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Dashboard',
-                                    style: AppTextStyles.headingLarge,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Manage your jobs and earnings',
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      color: BrandColors.textMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: BrandColors.lightGray,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: const Icon(
-                                Icons.notifications_none_rounded,
-                                color: BrandColors.white,
-                                size: 22,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ).animate().fadeIn(),
-                ),
-
-                // Stats Cards
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-                    child: Row(
-                      children: [
-                        _StatCard(
-                          icon: Icons.currency_rupee,
-                          iconColor: BrandColors.primaryGreen,
-                          value: '₹${thisMonthEarnings.toInt()}',
-                          label: 'This Month',
-                          bgColor: BrandColors.primaryGreen.withValues(
-                            alpha: 0.1,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        _StatCard(
-                          icon: Icons.work_outline,
-                          iconColor: BrandColors.info,
-                          value: '$totalJobs',
-                          label: 'Total Jobs',
-                          bgColor: BrandColors.info.withValues(alpha: 0.1),
-                        ),
-                        const SizedBox(width: 12),
-                        _StatCard(
-                          icon: Icons.star_rounded,
-                          iconColor: BrandColors.starYellow,
-                          value: rating,
-                          label: 'Rating',
-                          bgColor: BrandColors.starYellow.withValues(
-                            alpha: 0.1,
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 200.ms),
-                  ),
-                ),
-
-                // Earnings Chart Placeholder
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: BrandColors.lightGray,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
+                  // Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Earnings',
-                                style: AppTextStyles.headingSmall,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Dashboard',
+                                      style: AppTextStyles.headingLarge,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "Welcome back, ${user?.name}. Here's your overview for today.",
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: BrandColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: BrandColors.lightGray,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: const Icon(
+                                  Icons.notifications_none_rounded,
+                                  color: BrandColors.white,
+                                  size: 22,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: BrandColors.lightGray,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Available for jobs?',
+                              style: AppTextStyles.bodyMedium,
+                            ),
+                            Switch(
+                              value:
+                                  workerAsync.valueOrNull?.isAvailable ?? false,
+                              activeColor: BrandColors.primaryGreen,
+                              onChanged: user == null
+                                  ? null
+                                  : (val) async {
+                                      try {
+                                        await ref
+                                            .read(firestoreServiceProvider)
+                                            .updateWorkerProfile(user.uid, {
+                                              'is_available': val,
+                                            });
+                                        ref.invalidate(
+                                          workerProfileProvider(user.uid),
+                                        );
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Failed to update availability: $e',
+                                              ),
+                                              backgroundColor:
+                                                  BrandColors.error,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                            ),
+                          ],
+                        ),
+                      ).animate().fadeIn(delay: 100.ms),
+                    ),
+                  ),
+
+                  // Earnings Chart Placeholder
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: BrandColors.lightGray,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SectionHeader(
+                              title: 'Earnings Overview',
+                              titleStyle: AppTextStyles.headingSmall,
+                              trailing: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 10,
                                   vertical: 4,
@@ -211,127 +231,191 @@ class WorkerDashboardScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'This Week',
+                                  'This Month',
                                   style: AppTextStyles.caption.copyWith(
                                     fontSize: 10,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          // Mini bar chart
-                          SizedBox(
-                            height: 120,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: barItems,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ).animate().fadeIn(delay: 300.ms),
-                ),
+                            const SizedBox(height: 12),
 
-                // New Job Requests
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('New Requests', style: AppTextStyles.headingSmall),
-                        if (pendingBookings.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
+                            _StatCard(
+                              value: '₹${thisMonthEarnings.toInt()}',
+                              headingSmallSize: 20,
+                              captionSize: 12,
                             ),
-                            decoration: BoxDecoration(
-                              color: BrandColors.warning.withValues(
-                                alpha: 0.15,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '${pendingBookings.length}',
-                              style: AppTextStyles.caption.copyWith(
-                                color: BrandColors.warning,
-                                fontWeight: FontWeight.w600,
+
+                            const SizedBox(height: 20),
+                            // Mini bar chart
+                            SizedBox(
+                              height: 120,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: barItems,
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  ).animate().fadeIn(delay: 400.ms),
-                ),
-                if (pendingBookings.isEmpty)
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
-                      child: AppEmptyState(
-                        icon: Icons.inbox_outlined,
-                        title: 'No New Requests',
-                        subtitle: 'You are all caught up for now.',
+
+                            const SizedBox(height: 16),
+
+                            Divider(),
+
+                            const SizedBox(height: 16),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                              child: Column(
+                                spacing: 20,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      _StatCard(
+                                        value: 'Jobs Completed',
+                                        headingSmallSize: 12,
+                                        label: totalJobs.toString(),
+                                        captionSize: 15,
+                                      ),
+
+                                      _StatCard(
+                                        value: 'Overall Rating',
+                                        headingSmallSize: 12,
+                                        label: '$rating',
+                                        captionSize: 15,
+                                      ),
+                                    ],
+                                  ),
+
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      _StatCard(
+                                        value: 'Active Jobs',
+                                        headingSmallSize: 12,
+                                        label: activeBookings.length.toString(),
+                                        captionSize: 15,
+                                      ),
+
+                                      _StatCard(
+                                        value: 'Upcoming Est.',
+                                        headingSmallSize: 12,
+                                        label: '₹${upcomingEst.toInt()}',
+                                        captionSize: 15,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final booking = pendingBookings[index];
-                      return _JobRequestCard(booking: booking)
-                          .animate(delay: Duration(milliseconds: 100 * index))
-                          .fadeIn()
-                          .slideY(begin: 0.05);
-                    }, childCount: pendingBookings.length),
+                    ).animate().fadeIn(delay: 300.ms),
                   ),
 
-                // Ongoing Jobs
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
-                    child: Text(
-                      'Ongoing Jobs',
-                      style: AppTextStyles.headingSmall,
-                    ),
-                  ).animate().fadeIn(delay: 500.ms),
-                ),
-                if (activeBookings.isEmpty)
-                  const SliverToBoxAdapter(
+                  // New Job Requests
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
-                      child: AppEmptyState(
-                        icon: Icons.work_outline,
-                        title: 'No Ongoing Jobs',
-                        subtitle: 'You do not have any active jobs right now.',
+                      padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
+                      child: SectionHeader(
+                        title: 'New Requests',
+                        titleStyle: AppTextStyles.headingSmall,
+                        trailing: pendingBookings.isNotEmpty
+                            ? Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: BrandColors.warning.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${pendingBookings.length}',
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: BrandColors.warning,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
-                    ),
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final booking = activeBookings[index];
-                      return _OngoingJobCard(
-                            customerName: booking.customerName,
-                            customerPhoto: booking.customerPhoto,
-                            description: booking.description,
-                            status: booking.status,
-                            amount: booking.totalAmount,
-                          )
-                          .animate(delay: Duration(milliseconds: 100 * index))
-                          .fadeIn()
-                          .slideY(begin: 0.05);
-                    }, childCount: activeBookings.length),
+                    ).animate().fadeIn(delay: 400.ms),
                   ),
-              ],
+                  if (pendingBookings.isEmpty)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: AppEmptyState(
+                          icon: Icons.inbox_outlined,
+                          title: 'No New Requests',
+                          subtitle: 'You are all caught up for now.',
+                        ),
+                      ),
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final booking = pendingBookings[index];
+                        return _JobRequestCard(booking: booking)
+                            .animate(delay: Duration(milliseconds: 100 * index))
+                            .fadeIn()
+                            .slideY(begin: 0.05);
+                      }, childCount: pendingBookings.length),
+                    ),
+
+                  // Ongoing Jobs
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
+                      child: SectionHeader(
+                        title: 'Ongoing Jobs',
+                        titleStyle: AppTextStyles.headingSmall,
+                      ),
+                    ).animate().fadeIn(delay: 500.ms),
+                  ),
+                  if (activeBookings.isEmpty)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: AppEmptyState(
+                          icon: Icons.work_outline,
+                          title: 'No Ongoing Jobs',
+                          subtitle:
+                              'You do not have any active jobs right now.',
+                        ),
+                      ),
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final booking = activeBookings[index];
+                        return _OngoingJobCard(
+                              customerName: booking.customerName,
+                              customerPhoto: booking.customerPhoto,
+                              description: booking.description,
+                              status: booking.status,
+                              amount: booking.totalAmount,
+                            )
+                            .animate(delay: Duration(milliseconds: 100 * index))
+                            .fadeIn()
+                            .slideY(begin: 0.05);
+                      }, childCount: activeBookings.length),
+                    ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
+        );
+      },
       loading: () => const Scaffold(
         backgroundColor: BrandColors.shadeBlack,
         body: Center(
@@ -350,51 +434,37 @@ class WorkerDashboardScreen extends ConsumerWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
+  final double captionSize;
+  final double headingSmallSize;
   final String value;
-  final String label;
-  final Color bgColor;
+  final String? label;
 
   const _StatCard({
-    required this.icon,
-    required this.iconColor,
+    required this.captionSize,
+    required this.headingSmallSize,
     required this.value,
-    required this.label,
-    required this.bgColor,
+    this.label,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: BrandColors.lightGray,
-          borderRadius: BorderRadius.circular(16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: AppTextStyles.headingSmall.copyWith(
+            fontSize: headingSmallSize,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: iconColor, size: 18),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: AppTextStyles.headingSmall.copyWith(fontSize: 17),
-            ),
-            const SizedBox(height: 2),
-            Text(label, style: AppTextStyles.caption.copyWith(fontSize: 9)),
-          ],
-        ),
-      ),
+        if (label != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            label!,
+            style: AppTextStyles.caption.copyWith(fontSize: captionSize),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -450,17 +520,19 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
   Future<void> _updateStatus(String status) async {
     if (_isUpdatingStatus) return;
     setState(() => _isUpdatingStatus = true);
-    
+
     try {
-      await ref.read(firestoreServiceProvider).updateBookingStatus(widget.booking.id, status);
-      
+      await ref
+          .read(firestoreServiceProvider)
+          .updateBookingStatus(widget.booking.id, status);
+
       // Invalidate the dashboard bookings list so it refreshes immediately
       ref.invalidate(workerBookingsProvider);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update booking status: $e'), 
+            content: Text('Failed to update booking status: $e'),
             backgroundColor: BrandColors.error,
           ),
         );
@@ -597,7 +669,9 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
               ),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: _isUpdatingStatus ? null : () => _updateStatus('cancelled'),
+                  onPressed: _isUpdatingStatus
+                      ? null
+                      : () => _updateStatus('cancelled'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: BrandColors.error,
                     side: const BorderSide(color: BrandColors.error, width: 1),
@@ -614,7 +688,9 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _isUpdatingStatus ? null : () => _updateStatus('accepted'),
+                  onPressed: _isUpdatingStatus
+                      ? null
+                      : () => _updateStatus('accepted'),
                   child: _isUpdatingStatus
                       ? const SizedBox(
                           width: 16,

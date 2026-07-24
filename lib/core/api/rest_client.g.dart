@@ -149,14 +149,14 @@ class _RestClient implements RestClient {
   @override
   Future<List<WorkerModel>> getWorkers({
     String? category,
-    String? query,
-    bool? isAvailable,
+    String? search,
+    bool? availableOnly,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'category': category,
-      r'query': query,
-      r'is_available': isAvailable,
+      r'search': search,
+      r'available_only': availableOnly,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

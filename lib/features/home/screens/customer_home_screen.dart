@@ -6,11 +6,13 @@ import 'package:sevaku/core/theme/brand_colors.dart';
 import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/features/home/widgets/category_grid.dart';
 import 'package:sevaku/features/workers/widgets/worker_card.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/providers/location_provider.dart';
 import 'package:sevaku/core/widgets/app_empty_state.dart';
 import 'package:sevaku/core/widgets/app_error_state.dart';
+import 'package:sevaku/core/widgets/section_header.dart';
 
 class CustomerHomeScreen extends ConsumerStatefulWidget {
   const CustomerHomeScreen({super.key});
@@ -36,6 +38,19 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
     super.dispose();
   }
 
+  String _getGreeting(String? name) {
+    final hour = DateTime.now().hour;
+    String timeGreeting = 'Hello';
+    if (hour < 12) {
+      timeGreeting = 'Good morning';
+    } else if (hour < 17) {
+      timeGreeting = 'Good afternoon';
+    } else {
+      timeGreeting = 'Good evening';
+    }
+    return '$timeGreeting, ${name?.split(' ').first ?? 'there'}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
@@ -52,7 +67,7 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
             ref.invalidate(featuredWorkersProvider);
             ref.invalidate(workersByCategoryProvider(null));
             ref.invalidate(customerBookingsProvider);
-            
+
             await Future.wait([
               ref.read(featuredWorkersProvider.future),
               ref.read(workersByCategoryProvider(null).future),
@@ -72,7 +87,7 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hello, ${user?.name.split(' ').first ?? 'there'}',
+                              _getGreeting(user?.name),
                               style: AppTextStyles.headingMedium,
                             ),
                             const SizedBox(height: 2),
@@ -87,9 +102,13 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                                 Expanded(
                                   child: Consumer(
                                     builder: (context, ref, child) {
-                                      final addressAsync = ref.watch(currentAddressProvider);
+                                      final addressAsync = ref.watch(
+                                        currentAddressProvider,
+                                      );
                                       return Text(
-                                        addressAsync.value ?? user?.city ?? 'fetching location...',
+                                        addressAsync.value ??
+                                            user?.city ??
+                                            'fetching location...',
                                         style: AppTextStyles.bodySmall.copyWith(
                                           color: BrandColors.textMuted,
                                         ),
@@ -106,45 +125,10 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                       ).animate().fadeIn().slideX(begin: -0.1),
 
                       // Profile + Notification
-                      Row(
-                        children: [
-                          _IconBtn(
-                            icon: Icons.notifications_none_rounded,
-                            onTap: () {},
-                            badge: 3,
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: BrandColors.primaryGreen,
-                                  width: 2,
-                                ),
-                                image:
-                                    resolveImageProvider(user?.photoUrl) != null
-                                    ? DecorationImage(
-                                        image: resolveImageProvider(
-                                          user!.photoUrl,
-                                        )!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
-                              ),
-                              child:
-                                  resolveImageProvider(user?.photoUrl) == null
-                                  ? const Icon(
-                                      Icons.person,
-                                      color: BrandColors.textMuted,
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ],
+                      _IconBtn(
+                        icon: Icons.notifications_none_rounded,
+                        onTap: () {},
+                        badge: 3,
                       ).animate().fadeIn(delay: 200.ms),
                     ],
                   ),
@@ -157,33 +141,39 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 6),
                   child: GestureDetector(
                     onTap: () => context.push('/customer/search'),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: BrandColors.lightGray,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: BrandColors.divider.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.search_rounded,
-                            color: BrandColors.textMuted,
-                            size: 22,
+                    child: Hero(
+                      tag: 'search_bar',
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Search for services...',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: BrandColors.textHint,
+                          decoration: BoxDecoration(
+                            color: BrandColors.lightGray,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: BrandColors.divider.withValues(alpha: 0.3),
                             ),
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.search_rounded,
+                                color: BrandColors.textMuted,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Search for services...',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: BrandColors.textHint,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -191,59 +181,22 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
               ),
 
               // Section: Categories
-              // SliverToBoxAdapter(
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
-              //         child: Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             Text('Services', style: AppTextStyles.headingSmall),
-              //             TextButton(
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'See All',
-              //                 style: AppTextStyles.bodySmall.copyWith(
-              //                   color: BrandColors.primaryGreen,
-              //                   fontWeight: FontWeight.w500,
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //       CategoryGrid(
-              //         onCategoryTap: (category) {
-              //           context.push('/customer/workers/$category');
-              //         },
-              //       ),
-              //     ],
-              //   ).animate().fadeIn(delay: 400.ms),
-              // ),
+              SliverToBoxAdapter(
+                child: CategoryGrid(
+                  onCategoryTap: (category) {
+                    context.push('/customer/workers/$category');
+                  },
+                ).animate().fadeIn(delay: 400.ms),
+              ),
 
               // Section: Featured Workers
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Top Rated', style: AppTextStyles.headingSmall),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/customer/workers/all');
-                        },
-                        child: Text(
-                          'See All',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: BrandColors.primaryGreen,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SectionHeader(
+                    title: 'Top Rated',
+                    actionLabel: 'See All',
+                    onActionTap: () => context.push('/customer/workers/all'),
                   ),
                 ).animate().fadeIn(delay: 500.ms),
               ),
@@ -294,39 +247,14 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                 ),
               ),
 
-              // Section: Recent Bookings
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
-                  child: Text(
-                    'Active Bookings',
-                    style: AppTextStyles.headingSmall,
-                  ),
-                ).animate().fadeIn(delay: 600.ms),
-              ),
-              SliverToBoxAdapter(child: _buildActiveBookings()),
-
               // Section: Near You
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Near You', style: AppTextStyles.headingSmall),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/customer/workers/all');
-                        },
-                        child: Text(
-                          'See All',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: BrandColors.primaryGreen,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: SectionHeader(
+                    title: 'Near You',
+                    actionLabel: 'See All',
+                    onActionTap: () => context.push('/customer/workers/all'),
                   ),
                 ).animate().fadeIn(delay: 700.ms),
               ),
@@ -369,6 +297,8 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                 ),
               ),
 
+              // Section: Active Bookings (Elevated)
+              SliverToBoxAdapter(child: _buildActiveBookings()),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           ),
@@ -387,39 +317,34 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
             .toList();
 
         if (activeBookings.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 32),
-            child: AppEmptyState(
-              icon: Icons.calendar_today_outlined,
-              title: 'No active bookings',
-            ),
-          );
+          return const SizedBox.shrink();
         }
 
-        return SizedBox(
-          height: 135,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: activeBookings.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final booking = activeBookings[index];
-              return _ActiveBookingCard(booking: booking);
-            },
-          ),
-        ).animate().fadeIn(delay: 650.ms);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 14),
+              child: SectionHeader(title: 'Active Bookings'),
+            ),
+            SizedBox(
+              height: 135,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: activeBookings.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final booking = activeBookings[index];
+                  return _ActiveBookingCard(booking: booking);
+                },
+              ),
+            ),
+          ],
+        ).animate().fadeIn(delay: 250.ms);
       },
-      loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
-        ),
-      ),
-      error: (err, _) => AppErrorState(
-        message: 'Error loading active bookings',
-        onRetry: () => ref.invalidate(customerBookingsProvider),
-      ),
+      loading: () => const SizedBox.shrink(),
+      error: (err, _) => const SizedBox.shrink(),
     );
   }
 }
@@ -508,9 +433,8 @@ class _ActiveBookingCard extends StatelessWidget {
       width: 260,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: BrandColors.lightGray,
+        color: BrandColors.cardDark,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: statusColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -550,7 +474,7 @@ class _ActiveBookingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.15),
+                  color: BrandColors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(

@@ -67,13 +67,15 @@ class CustomerProfileScreen extends ConsumerWidget {
                         final picker = ImagePicker();
                         final picked = await picker.pickImage(
                           source: ImageSource.gallery,
-                          imageQuality: 80,
+                          imageQuality: 30,
+                          maxWidth: 500,
+                          maxHeight: 500,
                         );
                         if (picked == null) return;
                         final storage = ref.read(storageServiceProvider);
                         final firestore = ref.read(firestoreServiceProvider);
                         final path = await storage.uploadProfilePhoto(user.uid, picked);
-                        await firestore.updateUser(user.uid, {'photoUrl': path});
+                        await firestore.updateUser(user.uid, {'photo_url': path});
                         ref.read(authProvider.notifier).refreshUser();
                       },
                       child: Container(

@@ -3,14 +3,17 @@ import 'package:flutter/foundation.dart';
 import '../utils/token_storage.dart';
 
 class ApiClient {
+  static const String ngrokBaseUrl =
+      'https://punctuate-private-canned.ngrok-free.dev'; // Ngrok forwarding URL
+
   static String get baseUrl {
     if (kIsWeb) {
-      return 'https://sevakubackend-production.up.railway.app/api/v1';
+      return '$ngrokBaseUrl/api/v1';
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'https://sevakubackend-production.up.railway.app/api/v1';
+      return '$ngrokBaseUrl/api/v1';
     }
-    return 'https://sevakubackend-production.up.railway.app/api/v1';
+    return '$ngrokBaseUrl/api/v1';
   }
 
   final Dio _dio;

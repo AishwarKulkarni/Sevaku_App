@@ -48,9 +48,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         }
       }
       if (next.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error!)));
         ref.read(authProvider.notifier).clearError();
       }
     });
@@ -70,7 +70,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // Back button
                 IconButton(
                   onPressed: () => context.go('/login'),
-                  icon: const Icon(Icons.arrow_back_ios, color: BrandColors.white),
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: BrandColors.white,
+                  ),
                   style: IconButton.styleFrom(
                     backgroundColor: BrandColors.lightGray,
                     padding: const EdgeInsets.all(12),
@@ -80,8 +83,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 24),
 
                 // Title
-                Text('Create Account', style: AppTextStyles.headingLarge)
-                    .animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
+                Text(
+                  'Create Account',
+                  style: AppTextStyles.headingLarge,
+                ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
                 const SizedBox(height: 4),
                 Text(
                   'Join Sevaku and find the best home services',
@@ -93,8 +98,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 32),
 
                 // Role Selector
-                Text('I am a', style: AppTextStyles.labelLarge)
-                    .animate().fadeIn(delay: 250.ms),
+                Text(
+                  'Choose your path',
+                  style: AppTextStyles.labelLarge,
+                ).animate().fadeIn(delay: 250.ms),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -178,7 +185,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       size: 20,
                       color: BrandColors.textMuted,
                     ),
-                    onPressed: () => setState(() => _showPassword = !_showPassword),
+                    onPressed: () =>
+                        setState(() => _showPassword = !_showPassword),
                   ),
                   validator: (val) {
                     if (val == null || val.length < 6) {
@@ -194,13 +202,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AppButton(
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
-                      ref.read(authProvider.notifier).register(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                        _phoneController.text.trim(),
-                        _passwordController.text,
-                        _selectedRole,
-                      );
+                      ref
+                          .read(authProvider.notifier)
+                          .register(
+                            _nameController.text.trim(),
+                            _emailController.text.trim(),
+                            _phoneController.text.trim(),
+                            _passwordController.text,
+                            _selectedRole,
+                          );
                     }
                   },
                   isLoading: authState.isLoading,
@@ -277,11 +287,11 @@ class _RoleTile extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? BrandColors.primaryGreen.withValues(alpha: 0.1)
+              ? BrandColors.white.withValues(alpha: 0.1)
               : BrandColors.lightGray,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? BrandColors.primaryGreen : Colors.transparent,
+            color: isSelected ? BrandColors.white : Colors.transparent,
             width: 1.5,
           ),
         ),
@@ -290,13 +300,13 @@ class _RoleTile extends StatelessWidget {
             Icon(
               icon,
               size: 32,
-              color: isSelected ? BrandColors.primaryGreen : BrandColors.textMuted,
+              color: isSelected ? BrandColors.white : BrandColors.textMuted,
             ),
             const SizedBox(height: 8),
             Text(
               title,
               style: AppTextStyles.labelLarge.copyWith(
-                color: isSelected ? BrandColors.primaryGreen : BrandColors.white,
+                color: isSelected ? BrandColors.white : BrandColors.white,
               ),
             ),
             const SizedBox(height: 2),
@@ -304,7 +314,7 @@ class _RoleTile extends StatelessWidget {
               subtitle,
               style: AppTextStyles.caption.copyWith(
                 color: isSelected
-                    ? BrandColors.primaryGreen.withValues(alpha: 0.7)
+                    ? BrandColors.white.withValues(alpha: 0.7)
                     : BrandColors.textMuted,
               ),
             ),

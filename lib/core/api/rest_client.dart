@@ -32,8 +32,8 @@ abstract class RestClient {
   @GET('/workers/')
   Future<List<WorkerModel>> getWorkers({
     @Query('category') String? category,
-    @Query('query') String? query,
-    @Query('is_available') bool? isAvailable,
+    @Query('search') String? search,
+    @Query('available_only') bool? availableOnly,
   });
 
   @GET('/workers/{worker_id}')

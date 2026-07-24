@@ -35,7 +35,10 @@ class ApiService {
   Future<List<WorkerModel>> getWorkers({String? category}) async {
     try {
       if (category == 'all') category = null;
-      return await _restClient.getWorkers(category: category);
+      return await _restClient.getWorkers(
+        category: category,
+        availableOnly: true,
+      );
     } catch (e) {
       return [];
     }
@@ -44,7 +47,7 @@ class ApiService {
   Future<List<WorkerModel>> getFeaturedWorkers({int limit = 10}) async {
     try {
       // Assuming backend returns sorted by rating. We just take first 10.
-      final workers = await _restClient.getWorkers();
+      final workers = await _restClient.getWorkers(availableOnly: true);
       workers.sort((a, b) => b.rating.compareTo(a.rating));
       return workers.take(limit).toList();
     } catch (e) {
@@ -54,7 +57,7 @@ class ApiService {
 
   Future<List<WorkerModel>> searchWorkers(String query) async {
     try {
-      return await _restClient.getWorkers(query: query);
+      return await _restClient.getWorkers(search: query, availableOnly: true);
     } catch (e) {
       return [];
     }
@@ -184,6 +187,7 @@ class ApiService {
       await _restClient.updateWorkerProfile(data);
     } catch (e) {
       print('Failed to update worker profile: $e');
+      rethrow;
     }
   }
 

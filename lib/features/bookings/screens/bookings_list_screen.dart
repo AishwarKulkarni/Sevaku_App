@@ -8,6 +8,7 @@ import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/models/booking_model.dart';
+import 'package:sevaku/models/review_model.dart';
 import 'package:sevaku/core/widgets/app_empty_state.dart';
 import 'package:sevaku/core/widgets/app_error_state.dart';
 
@@ -37,7 +38,9 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
   @override
   Widget build(BuildContext context) {
     final isCustomer = ref.watch(isCustomerProvider);
-    final bookingsAsync = ref.watch(isCustomer ? customerBookingsProvider : workerBookingsProvider);
+    final bookingsAsync = ref.watch(
+      isCustomer ? customerBookingsProvider : workerBookingsProvider,
+    );
 
     return Scaffold(
       backgroundColor: BrandColors.shadeBlack,
@@ -54,8 +57,12 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
       ),
       body: bookingsAsync.when(
         data: (bookings) {
-          final activeBookings = bookings.where((b) => b.status != 'completed' && b.status != 'cancelled').toList();
-          final pastBookings = bookings.where((b) => b.status == 'completed' || b.status == 'cancelled').toList();
+          final activeBookings = bookings
+              .where((b) => b.status != 'completed' && b.status != 'cancelled')
+              .toList();
+          final pastBookings = bookings
+              .where((b) => b.status == 'completed' || b.status == 'cancelled')
+              .toList();
 
           return TabBarView(
             controller: _tabController,
@@ -65,8 +72,16 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
                 emptyMessage: 'No active bookings',
                 emptyIcon: Icons.calendar_today_outlined,
                 onRefresh: () async {
-                  ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
-                  await ref.read(isCustomer ? customerBookingsProvider.future : workerBookingsProvider.future);
+                  ref.invalidate(
+                    isCustomer
+                        ? customerBookingsProvider
+                        : workerBookingsProvider,
+                  );
+                  await ref.read(
+                    isCustomer
+                        ? customerBookingsProvider.future
+                        : workerBookingsProvider.future,
+                  );
                 },
               ),
               _BookingsList(
@@ -74,18 +89,30 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
                 emptyMessage: 'No past bookings',
                 emptyIcon: Icons.history,
                 onRefresh: () async {
-                  ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
-                  await ref.read(isCustomer ? customerBookingsProvider.future : workerBookingsProvider.future);
+                  ref.invalidate(
+                    isCustomer
+                        ? customerBookingsProvider
+                        : workerBookingsProvider,
+                  );
+                  await ref.read(
+                    isCustomer
+                        ? customerBookingsProvider.future
+                        : workerBookingsProvider.future,
+                  );
                 },
               ),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: BrandColors.primaryGreen)),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+        ),
         error: (err, _) => AppErrorState(
           message: 'Error loading bookings',
           onRetry: () {
-            ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
+            ref.invalidate(
+              isCustomer ? customerBookingsProvider : workerBookingsProvider,
+            );
           },
         ),
       ),
@@ -118,10 +145,7 @@ class _BookingsList extends StatelessWidget {
           child: Container(
             height: MediaQuery.of(context).size.height * 0.6,
             alignment: Alignment.center,
-            child: AppEmptyState(
-              icon: emptyIcon,
-              title: emptyMessage,
-            ),
+            child: AppEmptyState(icon: emptyIcon, title: emptyMessage),
           ),
         ),
       );
@@ -160,22 +184,29 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
   bool _isProcessingPayment = false;
   bool _isGettingPayment = false;
   bool _isUpdatingStatus = false;
+  bool _showRatingCard = false;
+  int _rating = 0;
+  bool _isSubmittingRating = false;
 
   Future<void> _updateStatus(String status) async {
     if (_isUpdatingStatus) return;
     setState(() => _isUpdatingStatus = true);
-    
+
     try {
       final isCustomer = ref.read(isCustomerProvider);
-      await ref.read(firestoreServiceProvider).updateBookingStatus(widget.booking.id, status);
-      
+      await ref
+          .read(firestoreServiceProvider)
+          .updateBookingStatus(widget.booking.id, status);
+
       // Invalidate the bookings list so it refreshes immediately
-      ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
+      ref.invalidate(
+        isCustomer ? customerBookingsProvider : workerBookingsProvider,
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update booking status: $e'), 
+            content: Text('Failed to update booking status: $e'),
             backgroundColor: BrandColors.error,
           ),
         );
@@ -188,30 +219,42 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
   Future<void> _processPayment() async {
     if (_isProcessingPayment) return;
     setState(() => _isProcessingPayment = true);
-    
+
     try {
       // Mock payment gateway delay
       await Future.delayed(const Duration(seconds: 2));
       final firestore = ref.read(firestoreServiceProvider);
       await firestore.updatePaymentStatus(widget.booking.id, 'paid');
       await firestore.updateBookingStatus(widget.booking.id, 'completed');
-      
-      final isCustomer = ref.read(isCustomerProvider);
-      ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
-      
+
       if (mounted) {
+        setState(() {
+          _showRatingCard = true;
+          _isProcessingPayment = false;
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Payment successful! Job completed.'), 
+            content: Text('Payment successful! Job completed.'),
             backgroundColor: BrandColors.success,
           ),
         );
+
+        // Auto-dismiss rating card after 10 seconds if ignored
+        Future.delayed(const Duration(seconds: 10), () {
+          if (mounted && _showRatingCard) {
+            final isCustomer = ref.read(isCustomerProvider);
+            ref.invalidate(
+              isCustomer ? customerBookingsProvider : workerBookingsProvider,
+            );
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Payment failed. Please try again.'), 
+            content: Text('Payment failed. Please try again.'),
             backgroundColor: BrandColors.error,
           ),
         );
@@ -224,21 +267,23 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
   Future<void> _getPayment() async {
     if (_isGettingPayment) return;
     setState(() => _isGettingPayment = true);
-    
+
     try {
       // Mock QR scanning delay / future placeholder for QR overlay
       await Future.delayed(const Duration(seconds: 2));
       final firestore = ref.read(firestoreServiceProvider);
       await firestore.updatePaymentStatus(widget.booking.id, 'paid');
       await firestore.updateBookingStatus(widget.booking.id, 'completed');
-      
+
       final isCustomer = ref.read(isCustomerProvider);
-      ref.invalidate(isCustomer ? customerBookingsProvider : workerBookingsProvider);
-      
+      ref.invalidate(
+        isCustomer ? customerBookingsProvider : workerBookingsProvider,
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Payment received via QR! Job completed.'), 
+            content: Text('Payment received via QR! Job completed.'),
             backgroundColor: BrandColors.success,
           ),
         );
@@ -247,7 +292,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Failed to receive payment. Please try again.'), 
+            content: Text('Failed to receive payment. Please try again.'),
             backgroundColor: BrandColors.error,
           ),
         );
@@ -259,19 +304,27 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
 
   Future<void> _openChat() async {
     if (_isStartingChat) return;
-    
+
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
     final isCustomer = currentUser.role == 'customer';
-    
-    final otherUid = isCustomer ? widget.booking.workerId : widget.booking.customerId;
-    final otherName = isCustomer ? widget.booking.workerName : widget.booking.customerName;
-    final otherPhoto = isCustomer ? widget.booking.workerPhoto : widget.booking.customerPhoto;
+
+    final otherUid = isCustomer
+        ? widget.booking.workerId
+        : widget.booking.customerId;
+    final otherName = isCustomer
+        ? widget.booking.workerName
+        : widget.booking.customerName;
+    final otherPhoto = isCustomer
+        ? widget.booking.workerPhoto
+        : widget.booking.customerPhoto;
 
     setState(() => _isStartingChat = true);
     try {
-      final chatId = await ref.read(firestoreServiceProvider).getOrCreateChat(
+      final chatId = await ref
+          .read(firestoreServiceProvider)
+          .getOrCreateChat(
             currentUser.uid,
             otherUid,
             otherName,
@@ -283,9 +336,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     } catch (e) {
       print('Error opening chat: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open chat: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not open chat: $e')));
       }
     } finally {
       if (mounted) setState(() => _isStartingChat = false);
@@ -294,13 +347,170 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showRatingCard) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: BrandColors.lightGray,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: BrandColors.primaryGreen.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.check_circle,
+              color: BrandColors.primaryGreen,
+              size: 48,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Payment Successful!',
+              style: AppTextStyles.headingSmall.copyWith(
+                color: BrandColors.primaryGreen,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'How was your experience with ${widget.booking.workerName}?',
+              style: AppTextStyles.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() => _rating = index + 1);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(
+                      index < _rating
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: BrandColors.warning,
+                      size: 36,
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      final isCustomer = ref.read(isCustomerProvider);
+                      ref.invalidate(
+                        isCustomer
+                            ? customerBookingsProvider
+                            : workerBookingsProvider,
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: BrandColors.divider),
+                    ),
+                    child: const Text('Skip'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _rating == 0 || _isSubmittingRating
+                        ? null
+                        : () async {
+                            setState(() => _isSubmittingRating = true);
+
+                            try {
+                              final currentUser = ref.read(currentUserProvider);
+                              final isCustomer = ref.read(isCustomerProvider);
+
+                              if (currentUser != null) {
+                                final review = ReviewModel(
+                                  id: '',
+                                  bookingId: widget.booking.id,
+                                  reviewerId: currentUser.uid,
+                                  reviewerName: currentUser.name,
+                                  reviewerPhoto: currentUser.photoUrl,
+                                  revieweeId: isCustomer
+                                      ? widget.booking.workerId
+                                      : widget.booking.customerId,
+                                  rating: _rating.toDouble(),
+                                  comment: '',
+                                  createdAt: DateTime.now(),
+                                );
+                                await ref
+                                    .read(firestoreServiceProvider)
+                                    .addReview(review);
+                              }
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Thanks for your feedback!'),
+                                    backgroundColor: BrandColors.success,
+                                  ),
+                                );
+
+                                // Invalidate workers list so the home screen updates its cards
+                                ref.invalidate(featuredWorkersProvider);
+                                ref.invalidate(workersByCategoryProvider(null));
+
+                                final isCustomer = ref.read(isCustomerProvider);
+                                ref.invalidate(
+                                  isCustomer
+                                      ? customerBookingsProvider
+                                      : workerBookingsProvider,
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Failed to submit review.'),
+                                    backgroundColor: BrandColors.error,
+                                  ),
+                                );
+                                setState(() => _isSubmittingRating = false);
+                              }
+                            }
+                          },
+                    child: _isSubmittingRating
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: BrandColors.shadeBlack,
+                            ),
+                          )
+                        : const Text('Submit'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ).animate().scale(duration: 300.ms, curve: Curves.easeOutBack);
+    }
+
     final statusColor = _getStatusColor();
     final statusLabel = _getStatusLabel();
     final currentUser = ref.watch(currentUserProvider);
     final isCustomer = currentUser?.role == 'customer';
-    
-    final displayPhoto = isCustomer ? widget.booking.workerPhoto : widget.booking.customerPhoto;
-    final displayName = isCustomer ? widget.booking.workerName : widget.booking.customerName;
+
+    final displayPhoto = isCustomer
+        ? widget.booking.workerPhoto
+        : widget.booking.customerPhoto;
+    final displayName = isCustomer
+        ? widget.booking.workerName
+        : widget.booking.customerName;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -324,7 +534,11 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 backgroundColor: BrandColors.surfaceLight,
                 backgroundImage: resolveImageProvider(displayPhoto),
                 child: resolveImageProvider(displayPhoto) == null
-                    ? const Icon(Icons.person, size: 22, color: BrandColors.textMuted)
+                    ? const Icon(
+                        Icons.person,
+                        size: 22,
+                        color: BrandColors.textMuted,
+                      )
                     : null,
               ),
               const SizedBox(width: 12),
@@ -332,10 +546,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      displayName, 
-                      style: AppTextStyles.labelLarge,
-                    ),
+                    Text(displayName, style: AppTextStyles.labelLarge),
                     const SizedBox(height: 2),
                     Text(
                       widget.booking.category.toUpperCase(),
@@ -345,7 +556,10 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -381,11 +595,17 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
           // Details row
           Row(
             children: [
-              _DetailChip(Icons.calendar_today, _formatDate(widget.booking.scheduledDate)),
+              _DetailChip(
+                Icons.calendar_today,
+                _formatDate(widget.booking.scheduledDate),
+              ),
               const SizedBox(width: 12),
               if (widget.booking.address != null)
                 Expanded(
-                  child: _DetailChip(Icons.location_on_outlined, widget.booking.address!),
+                  child: _DetailChip(
+                    Icons.location_on_outlined,
+                    widget.booking.address!,
+                  ),
                 ),
               const Spacer(),
               Column(
@@ -398,8 +618,8 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                   Text(
                     widget.booking.paymentStatus == 'paid' ? 'Paid' : 'Unpaid',
                     style: AppTextStyles.caption.copyWith(
-                      color: widget.booking.paymentStatus == 'paid' 
-                          ? BrandColors.primaryGreen 
+                      color: widget.booking.paymentStatus == 'paid'
+                          ? BrandColors.primaryGreen
                           : BrandColors.error,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -411,7 +631,8 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
           ),
 
           // Action buttons for active bookings
-          if (widget.booking.status != 'completed' && widget.booking.status != 'cancelled') ...[
+          if (widget.booking.status != 'completed' &&
+              widget.booking.status != 'cancelled') ...[
             const SizedBox(height: 14),
             Row(
               children: [
@@ -430,28 +651,37 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: _isStartingChat 
+                      child: _isStartingChat
                           ? const SizedBox(
-                              width: 16, 
-                              height: 16, 
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.primaryGreen)
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.primaryGreen,
+                              ),
                             )
                           : const Icon(Icons.chat_bubble_outline, size: 18),
                     ),
                   ),
-                  
+
                 if (isCustomer || widget.booking.status != 'pending')
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _isStartingChat ? null : _openChat,
-                      icon: _isStartingChat 
+                      icon: _isStartingChat
                           ? const SizedBox(
-                              width: 16, 
-                              height: 16, 
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.primaryGreen)
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.primaryGreen,
+                              ),
                             )
                           : const Icon(Icons.chat_bubble_outline, size: 16),
-                      label: const Text('Chat', style: TextStyle(fontFamily: 'Lexend', fontSize: 12)),
+                      label: const Text(
+                        'Chat',
+                        style: TextStyle(fontFamily: 'Lexend', fontSize: 12),
+                      ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: BrandColors.white,
                         side: const BorderSide(color: BrandColors.divider),
@@ -465,73 +695,114 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 if (!isCustomer && widget.booking.status == 'pending') ...[
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: _isUpdatingStatus ? null : () => _updateStatus('cancelled'),
+                      onPressed: _isUpdatingStatus
+                          ? null
+                          : () => _updateStatus('cancelled'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: BrandColors.error,
-                        side: const BorderSide(color: BrandColors.error, width: 1),
+                        side: const BorderSide(
+                          color: BrandColors.error,
+                          width: 1,
+                        ),
                         shape: ContinuousRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text('Decline', style: TextStyle(fontFamily: 'Lexend', fontSize: 13)),
+                      child: const Text(
+                        'Decline',
+                        style: TextStyle(fontFamily: 'Lexend', fontSize: 13),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _isUpdatingStatus ? null : () => _updateStatus('accepted'),
+                      onPressed: _isUpdatingStatus
+                          ? null
+                          : () => _updateStatus('accepted'),
                       child: _isUpdatingStatus
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.shadeBlack),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.shadeBlack,
+                              ),
                             )
-                          : const Text('Accept', style: TextStyle(fontFamily: 'Lexend', fontSize: 13)),
+                          : const Text(
+                              'Accept',
+                              style: TextStyle(
+                                fontFamily: 'Lexend',
+                                fontSize: 13,
+                              ),
+                            ),
                     ),
                   ),
                 ],
                 if (isCustomer || widget.booking.status != 'pending')
                   const SizedBox(width: 10),
-                if (isCustomer && widget.booking.status == 'in_progress' && widget.booking.paymentStatus != 'paid')
+                if (isCustomer &&
+                    widget.booking.status == 'in_progress' &&
+                    widget.booking.paymentStatus != 'paid')
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isProcessingPayment ? null : _processPayment,
-                      icon: _isProcessingPayment 
+                      icon: _isProcessingPayment
                           ? const SizedBox(
-                              width: 16, 
-                              height: 16, 
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.white)
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.white,
+                              ),
                             )
                           : const Icon(Icons.payment, size: 16),
-                      label: const Text('Pay Now', style: TextStyle(fontFamily: 'Lexend', fontSize: 12)),
+                      label: const Text(
+                        'Pay Now',
+                        style: TextStyle(fontFamily: 'Lexend', fontSize: 12),
+                      ),
                     ),
                   ),
                 if (!isCustomer && widget.booking.status == 'accepted')
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isUpdatingStatus ? null : () => _updateStatus('in_progress'),
+                      onPressed: _isUpdatingStatus
+                          ? null
+                          : () => _updateStatus('in_progress'),
                       icon: _isUpdatingStatus
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.white,
+                              ),
                             )
                           : const Icon(Icons.play_arrow_rounded, size: 16),
-                      label: const Text('Start Job', style: TextStyle(fontFamily: 'Lexend', fontSize: 12)),
+                      label: const Text(
+                        'Start Job',
+                        style: TextStyle(fontFamily: 'Lexend', fontSize: 12),
+                      ),
                     ),
                   ),
                 if (!isCustomer && widget.booking.status == 'in_progress')
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: _isGettingPayment ? null : _getPayment,
-                      icon: _isGettingPayment 
+                      icon: _isGettingPayment
                           ? const SizedBox(
-                              width: 16, 
-                              height: 16, 
-                              child: CircularProgressIndicator(strokeWidth: 2, color: BrandColors.white)
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: BrandColors.white,
+                              ),
                             )
                           : const Icon(Icons.qr_code, size: 16),
-                      label: const Text('Get Payment', style: TextStyle(fontFamily: 'Lexend', fontSize: 12)),
+                      label: const Text(
+                        'Get Payment',
+                        style: TextStyle(fontFamily: 'Lexend', fontSize: 12),
+                      ),
                     ),
                   ),
               ],
