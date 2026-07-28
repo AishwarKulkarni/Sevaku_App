@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sevaku/core/constants/app_constants.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
@@ -56,7 +56,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -70,12 +70,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // Back button
                 IconButton(
                   onPressed: () => context.go('/login'),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: BrandColors.white,
-                  ),
+                  icon: Icon(Icons.arrow_back_ios, color: context.colors.white),
                   style: IconButton.styleFrom(
-                    backgroundColor: BrandColors.lightGray,
+                    backgroundColor: context.colors.lightGray,
                     padding: const EdgeInsets.all(12),
                   ),
                 ).animate().fadeIn(),
@@ -85,13 +82,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // Title
                 Text(
                   'Create Account',
-                  style: AppTextStyles.headingLarge,
+                  style: context.typography.headingLarge,
                 ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
                 const SizedBox(height: 4),
                 Text(
                   'Join Sevaku and find the best home services',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: BrandColors.textSecondary,
+                  style: context.typography.bodyMedium.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ).animate().fadeIn(delay: 200.ms),
 
@@ -100,7 +97,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // Role Selector
                 Text(
                   'Choose your path',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 250.ms),
                 const SizedBox(height: 12),
                 Row(
@@ -183,7 +180,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
                       size: 20,
-                      color: BrandColors.textMuted,
+                      color: context.colors.textMuted,
                     ),
                     onPressed: () =>
                         setState(() => _showPassword = !_showPassword),
@@ -235,16 +232,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     children: [
                       Text(
                         'Already have an account? ',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: BrandColors.textMuted,
+                        style: context.typography.bodySmall.copyWith(
+                          color: context.colors.textMuted,
                         ),
                       ),
                       GestureDetector(
                         onTap: () => context.go('/login'),
                         child: Text(
                           'Sign In',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: BrandColors.primaryGreen,
+                          style: context.typography.bodySmall.copyWith(
+                            color: context.colors.primaryGreen,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -287,11 +284,11 @@ class _RoleTile extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? BrandColors.white.withValues(alpha: 0.1)
-              : BrandColors.lightGray,
+              ? context.colors.white.withValues(alpha: 0.1)
+              : context.colors.lightGray,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? BrandColors.white : Colors.transparent,
+            color: isSelected ? context.colors.white : Colors.transparent,
             width: 1.5,
           ),
         ),
@@ -300,22 +297,24 @@ class _RoleTile extends StatelessWidget {
             Icon(
               icon,
               size: 32,
-              color: isSelected ? BrandColors.white : BrandColors.textMuted,
+              color: isSelected
+                  ? context.colors.white
+                  : context.colors.textMuted,
             ),
             const SizedBox(height: 8),
             Text(
               title,
-              style: AppTextStyles.labelLarge.copyWith(
-                color: isSelected ? BrandColors.white : BrandColors.white,
+              style: context.typography.labelLarge.copyWith(
+                color: isSelected ? context.colors.white : context.colors.white,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: AppTextStyles.caption.copyWith(
+              style: context.typography.caption.copyWith(
                 color: isSelected
-                    ? BrandColors.white.withValues(alpha: 0.7)
-                    : BrandColors.textMuted,
+                    ? context.colors.white.withValues(alpha: 0.7)
+                    : context.colors.textMuted,
               ),
             ),
           ],

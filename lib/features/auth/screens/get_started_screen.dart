@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/core/widgets/app_logo.dart';
 
@@ -14,7 +14,7 @@ class GetStartedScreen extends StatelessWidget {
     // final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -30,8 +30,8 @@ class GetStartedScreen extends StatelessWidget {
               // Tagline
               Text(
                 'Home services, simplified.',
-                style: AppTextStyles.bodyLarge.copyWith(
-                  color: BrandColors.primaryGreen,
+                style: context.typography.bodyLarge.copyWith(
+                  color: context.colors.primaryGreen,
                   fontWeight: FontWeight.w500,
                 ),
               ).animate().fadeIn(delay: 450.ms).slideY(begin: 0.2),
@@ -44,8 +44,8 @@ class GetStartedScreen extends StatelessWidget {
                 child: Text(
                   'Find trusted professionals for plumbing, carpentry, painting, cleaning and more all in one app.',
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: BrandColors.textSecondary,
+                  style: context.typography.bodyMedium.copyWith(
+                    color: context.colors.textSecondary,
                     height: 1.6,
                   ),
                 ),
@@ -112,21 +112,21 @@ class _FeatureChip extends StatelessWidget {
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: BrandColors.lightGray,
+            color: context.colors.lightGray,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: BrandColors.divider.withValues(alpha: 0.5),
+              color: context.colors.divider.withValues(alpha: 0.5),
               width: 0.5,
             ),
           ),
-          child: Icon(icon, color: BrandColors.primaryGreen, size: 26),
+          child: Icon(icon, color: context.colors.primaryGreen, size: 26),
         ),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: AppTextStyles.caption.copyWith(
-            color: BrandColors.textSecondary,
+          style: context.typography.caption.copyWith(
+            color: context.colors.textSecondary,
             fontSize: 10,
             height: 1.3,
           ),

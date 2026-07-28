@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 import 'package:sevaku/core/theme/text_styles.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -21,19 +21,13 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (trailing == null && actionLabel == null) {
-      return Text(
-        title,
-        style: titleStyle ?? AppTextStyles.labelLarge,
-      );
+      return Text(title, style: titleStyle ?? context.typography.labelLarge);
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: titleStyle ?? AppTextStyles.labelLarge,
-        ),
+        Text(title, style: titleStyle ?? context.typography.labelLarge),
         if (trailing != null)
           trailing!
         else if (actionLabel != null)
@@ -41,8 +35,8 @@ class SectionHeader extends StatelessWidget {
             onPressed: onActionTap,
             child: Text(
               actionLabel!,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: BrandColors.primaryGreen,
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.primaryGreen,
                 fontWeight: FontWeight.w500,
               ),
             ),

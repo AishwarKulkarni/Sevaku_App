@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
@@ -81,9 +81,9 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     }
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back_ios, size: 20),
@@ -93,13 +93,13 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
             if (chat != null)
               CircleAvatar(
                 radius: 18,
-                backgroundColor: BrandColors.surfaceLight,
+                backgroundColor: context.colors.surfaceLight,
                 backgroundImage: resolveImageProvider(chat.otherPhoto(myUid)),
                 child: resolveImageProvider(chat.otherPhoto(myUid)) == null
-                    ? const Icon(
+                    ? Icon(
                         Icons.person,
                         size: 18,
-                        color: BrandColors.textMuted,
+                        color: context.colors.textMuted,
                       )
                     : null,
               ),
@@ -109,12 +109,12 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
               children: [
                 Text(
                   chat?.otherName(myUid) ?? 'Chat',
-                  style: AppTextStyles.labelLarge.copyWith(fontSize: 15),
+                  style: context.typography.labelLarge.copyWith(fontSize: 15),
                 ),
                 Text(
                   'Online',
-                  style: AppTextStyles.caption.copyWith(
-                    color: BrandColors.primaryGreen,
+                  style: context.typography.caption.copyWith(
+                    color: context.colors.primaryGreen,
                     fontSize: 10,
                   ),
                 ),
@@ -140,10 +140,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
             child: messagesAsync.when(
               data: (messages) {
                 if (messages.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'No messages yet',
-                      style: TextStyle(color: BrandColors.textMuted),
+                      style: TextStyle(color: context.colors.textMuted),
                     ),
                   );
                 }
@@ -173,7 +173,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                 ),
                                 child: Text(
                                   _formatTime(msg.timestamp),
-                                  style: AppTextStyles.caption.copyWith(
+                                  style: context.typography.caption.copyWith(
                                     fontSize: 10,
                                   ),
                                 ),
@@ -192,15 +192,15 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                   },
                 );
               },
-              loading: () => const Center(
+              loading: () => Center(
                 child: CircularProgressIndicator(
-                  color: BrandColors.primaryGreen,
+                  color: context.colors.primaryGreen,
                 ),
               ),
-              error: (err, _) => const Center(
+              error: (err, _) => Center(
                 child: Text(
                   'Error loading messages',
-                  style: TextStyle(color: BrandColors.error),
+                  style: TextStyle(color: context.colors.error),
                 ),
               ),
             ),
@@ -209,19 +209,19 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
           // Input
           Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-            decoration: const BoxDecoration(
-              color: BrandColors.shadeBlack,
+            decoration: BoxDecoration(
+              color: context.colors.shadeBlack,
               border: Border(
-                top: BorderSide(color: BrandColors.divider, width: 0.5),
+                top: BorderSide(color: context.colors.divider, width: 0.5),
               ),
             ),
             child: Row(
               children: [
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.add_circle_outline,
-                    color: BrandColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
                 Expanded(
@@ -230,31 +230,31 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                     minLines: 1,
                     maxLines: 3,
                     keyboardType: TextInputType.multiline,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Lexend',
-                      color: BrandColors.white,
+                      color: context.colors.white,
                       fontSize: 14,
                     ),
-                    cursorColor: BrandColors.primaryGreen,
+                    cursorColor: context.colors.primaryGreen,
                     decoration: InputDecoration(
                       alignLabelWithHint: true,
                       hintText: 'Type a message...',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontFamily: 'Lexend',
-                        color: BrandColors.textHint,
+                        color: context.colors.textHint,
                         fontSize: 14,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(
-                          color: BrandColors.divider,
+                        borderSide: BorderSide(
+                          color: context.colors.divider,
                           width: 1,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(
-                          color: BrandColors.primaryGreen,
+                        borderSide: BorderSide(
+                          color: context.colors.primaryGreen,
                           width: 1.5,
                         ),
                       ),
@@ -271,13 +271,13 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                   child: Container(
                     width: 44,
                     height: 44,
-                    decoration: const BoxDecoration(
-                      color: BrandColors.primaryGreen,
+                    decoration: BoxDecoration(
+                      color: context.colors.primaryGreen,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.send_rounded,
-                      color: BrandColors.shadeBlack,
+                      color: context.colors.shadeBlack,
                       size: 20,
                     ),
                   ),
@@ -321,7 +321,7 @@ class _MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 3),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: isMe ? BrandColors.primaryGreen : BrandColors.lightGray,
+          color: isMe ? context.colors.primaryGreen : context.colors.lightGray,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -339,7 +339,7 @@ class _MessageBubble extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Lexend',
                 fontSize: 13,
-                color: isMe ? BrandColors.shadeBlack : BrandColors.white,
+                color: isMe ? context.colors.shadeBlack : context.colors.white,
                 height: 1.4,
               ),
             ),
@@ -350,8 +350,8 @@ class _MessageBubble extends StatelessWidget {
                 fontFamily: 'Lexend',
                 fontSize: 9,
                 color: isMe
-                    ? BrandColors.shadeBlack.withValues(alpha: 0.5)
-                    : BrandColors.textMuted,
+                    ? context.colors.shadeBlack.withValues(alpha: 0.5)
+                    : context.colors.textMuted,
               ),
             ),
           ],

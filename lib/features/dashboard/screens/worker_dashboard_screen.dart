@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/core/widgets/app_error_state.dart';
@@ -81,11 +81,11 @@ class WorkerDashboardScreen extends ConsumerWidget {
         }
 
         return Scaffold(
-          backgroundColor: BrandColors.shadeBlack,
+          backgroundColor: context.colors.shadeBlack,
           body: SafeArea(
             child: RefreshIndicator(
-              color: BrandColors.primaryGreen,
-              backgroundColor: BrandColors.lightGray,
+              color: context.colors.primaryGreen,
+              backgroundColor: context.colors.lightGray,
               onRefresh: () async {
                 ref.invalidate(workerBookingsProvider);
                 if (user != null) {
@@ -115,14 +115,15 @@ class WorkerDashboardScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       'Dashboard',
-                                      style: AppTextStyles.headingLarge,
+                                      style: context.typography.headingLarge,
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       "Welcome back, ${user?.name}. Here's your overview for today.",
-                                      style: AppTextStyles.bodySmall.copyWith(
-                                        color: BrandColors.textMuted,
-                                      ),
+                                      style: context.typography.bodySmall
+                                          .copyWith(
+                                            color: context.colors.textMuted,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -131,12 +132,12 @@ class WorkerDashboardScreen extends ConsumerWidget {
                                 width: 44,
                                 height: 44,
                                 decoration: BoxDecoration(
-                                  color: BrandColors.lightGray,
+                                  color: context.colors.lightGray,
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.notifications_none_rounded,
-                                  color: BrandColors.white,
+                                  color: context.colors.white,
                                   size: 22,
                                 ),
                               ),
@@ -156,7 +157,7 @@ class WorkerDashboardScreen extends ConsumerWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: BrandColors.lightGray,
+                          color: context.colors.lightGray,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
@@ -164,12 +165,12 @@ class WorkerDashboardScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Available for jobs?',
-                              style: AppTextStyles.bodyMedium,
+                              style: context.typography.bodyMedium,
                             ),
                             Switch(
                               value:
                                   workerAsync.valueOrNull?.isAvailable ?? false,
-                              activeColor: BrandColors.primaryGreen,
+                              activeColor: context.colors.primaryGreen,
                               onChanged: user == null
                                   ? null
                                   : (val) async {
@@ -192,7 +193,7 @@ class WorkerDashboardScreen extends ConsumerWidget {
                                                 'Failed to update availability: $e',
                                               ),
                                               backgroundColor:
-                                                  BrandColors.error,
+                                                  context.colors.error,
                                             ),
                                           );
                                         }
@@ -212,7 +213,7 @@ class WorkerDashboardScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: BrandColors.lightGray,
+                          color: context.colors.lightGray,
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: Column(
@@ -220,19 +221,19 @@ class WorkerDashboardScreen extends ConsumerWidget {
                           children: [
                             SectionHeader(
                               title: 'Earnings Overview',
-                              titleStyle: AppTextStyles.headingSmall,
+                              titleStyle: context.typography.headingSmall,
                               trailing: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 10,
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BrandColors.surfaceLight,
+                                  color: context.colors.surfaceLight,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   'This Month',
-                                  style: AppTextStyles.caption.copyWith(
+                                  style: context.typography.caption.copyWith(
                                     fontSize: 10,
                                   ),
                                 ),
@@ -325,7 +326,7 @@ class WorkerDashboardScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
                       child: SectionHeader(
                         title: 'New Requests',
-                        titleStyle: AppTextStyles.headingSmall,
+                        titleStyle: context.typography.headingSmall,
                         trailing: pendingBookings.isNotEmpty
                             ? Container(
                                 padding: const EdgeInsets.symmetric(
@@ -333,15 +334,15 @@ class WorkerDashboardScreen extends ConsumerWidget {
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BrandColors.warning.withValues(
+                                  color: context.colors.warning.withValues(
                                     alpha: 0.15,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   '${pendingBookings.length}',
-                                  style: AppTextStyles.caption.copyWith(
-                                    color: BrandColors.warning,
+                                  style: context.typography.caption.copyWith(
+                                    color: context.colors.warning,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -378,7 +379,7 @@ class WorkerDashboardScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
                       child: SectionHeader(
                         title: 'Ongoing Jobs',
-                        titleStyle: AppTextStyles.headingSmall,
+                        titleStyle: context.typography.headingSmall,
                       ),
                     ).animate().fadeIn(delay: 500.ms),
                   ),
@@ -416,14 +417,14 @@ class WorkerDashboardScreen extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      loading: () => Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+          child: CircularProgressIndicator(color: context.colors.primaryGreen),
         ),
       ),
       error: (err, _) => Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         body: AppErrorState(
           message: 'Error loading dashboard data',
           onRetry: () => ref.invalidate(workerBookingsProvider),
@@ -453,7 +454,7 @@ class _StatCard extends StatelessWidget {
       children: [
         Text(
           value,
-          style: AppTextStyles.headingSmall.copyWith(
+          style: context.typography.headingSmall.copyWith(
             fontSize: headingSmallSize,
           ),
         ),
@@ -461,7 +462,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label!,
-            style: AppTextStyles.caption.copyWith(fontSize: captionSize),
+            style: context.typography.caption.copyWith(fontSize: captionSize),
           ),
         ],
       ],
@@ -485,20 +486,20 @@ class _BarItem extends StatelessWidget {
           width: 24,
           height: 80 * height,
           decoration: BoxDecoration(
-            color: BrandColors.primaryGreen.withValues(alpha: 0.8),
+            color: context.colors.primaryGreen.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(6),
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
-                BrandColors.primaryGreen,
-                BrandColors.primaryGreen.withValues(alpha: 0.4),
+                context.colors.primaryGreen,
+                context.colors.primaryGreen.withValues(alpha: 0.4),
               ],
             ),
           ),
         ),
         const SizedBox(height: 6),
-        Text(day, style: AppTextStyles.caption.copyWith(fontSize: 9)),
+        Text(day, style: context.typography.caption.copyWith(fontSize: 9)),
       ],
     );
   }
@@ -533,7 +534,7 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to update booking status: $e'),
-            backgroundColor: BrandColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -580,10 +581,10 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: BrandColors.lightGray,
+        color: context.colors.lightGray,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: BrandColors.warning.withValues(alpha: 0.2),
+          color: context.colors.warning.withValues(alpha: 0.2),
           width: 0.5,
         ),
       ),
@@ -594,16 +595,16 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: BrandColors.surfaceLight,
+                backgroundColor: context.colors.surfaceLight,
                 backgroundImage: resolveImageProvider(
                   widget.booking.customerPhoto,
                 ),
                 child:
                     resolveImageProvider(widget.booking.customerPhoto) == null
-                    ? const Icon(
+                    ? Icon(
                         Icons.person,
                         size: 20,
-                        color: BrandColors.textMuted,
+                        color: context.colors.textMuted,
                       )
                     : null,
               ),
@@ -614,26 +615,26 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
                   children: [
                     Text(
                       widget.booking.customerName,
-                      style: AppTextStyles.labelLarge,
+                      style: context.typography.labelLarge,
                     ),
                     Text(
                       '${widget.booking.scheduledDate.day}/${widget.booking.scheduledDate.month} at ${widget.booking.scheduledDate.hour}:${widget.booking.scheduledDate.minute.toString().padLeft(2, '0')}',
-                      style: AppTextStyles.caption,
+                      style: context.typography.caption,
                     ),
                   ],
                 ),
               ),
               Text(
                 '₹${widget.booking.totalAmount.toInt()}',
-                style: AppTextStyles.price.copyWith(fontSize: 16),
+                style: context.typography.price.copyWith(fontSize: 16),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             widget.booking.description,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: BrandColors.textSecondary,
+            style: context.typography.bodySmall.copyWith(
+              color: context.colors.textSecondary,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -649,19 +650,19 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
                   onPressed: _isStartingChat ? null : _openChat,
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    foregroundColor: BrandColors.white,
-                    side: const BorderSide(color: BrandColors.divider),
+                    foregroundColor: context.colors.white,
+                    side: BorderSide(color: context.colors.divider),
                     shape: ContinuousRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: _isStartingChat
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: BrandColors.primaryGreen,
+                            color: context.colors.primaryGreen,
                           ),
                         )
                       : const Icon(Icons.chat_bubble_outline, size: 18),
@@ -673,8 +674,8 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
                       ? null
                       : () => _updateStatus('cancelled'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: BrandColors.error,
-                    side: const BorderSide(color: BrandColors.error, width: 1),
+                    foregroundColor: context.colors.error,
+                    side: BorderSide(color: context.colors.error, width: 1),
                     shape: ContinuousRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -692,12 +693,12 @@ class _JobRequestCardState extends ConsumerState<_JobRequestCard> {
                       ? null
                       : () => _updateStatus('accepted'),
                   child: _isUpdatingStatus
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: BrandColors.shadeBlack,
+                            color: context.colors.shadeBlack,
                           ),
                         )
                       : const Text(
@@ -733,28 +734,24 @@ class _OngoingJobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final statusLabel = status == 'in_progress' ? 'In Progress' : 'Accepted';
     final statusColor = status == 'in_progress'
-        ? BrandColors.primaryGreen
-        : BrandColors.info;
+        ? context.colors.primaryGreen
+        : context.colors.info;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: BrandColors.lightGray,
+        color: context.colors.lightGray,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: BrandColors.surfaceLight,
+            backgroundColor: context.colors.surfaceLight,
             backgroundImage: resolveImageProvider(customerPhoto),
             child: resolveImageProvider(customerPhoto) == null
-                ? const Icon(
-                    Icons.person,
-                    size: 22,
-                    color: BrandColors.textMuted,
-                  )
+                ? Icon(Icons.person, size: 22, color: context.colors.textMuted)
                 : null,
           ),
           const SizedBox(width: 12),
@@ -764,12 +761,12 @@ class _OngoingJobCard extends StatelessWidget {
               children: [
                 Text(
                   customerName,
-                  style: AppTextStyles.labelLarge.copyWith(fontSize: 13),
+                  style: context.typography.labelLarge.copyWith(fontSize: 13),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   description,
-                  style: AppTextStyles.bodySmall.copyWith(fontSize: 11),
+                  style: context.typography.bodySmall.copyWith(fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -787,7 +784,7 @@ class _OngoingJobCard extends StatelessWidget {
                 ),
                 child: Text(
                   statusLabel,
-                  style: AppTextStyles.caption.copyWith(
+                  style: context.typography.caption.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 9,
@@ -797,7 +794,7 @@ class _OngoingJobCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 '₹${amount.toInt()}',
-                style: AppTextStyles.price.copyWith(fontSize: 13),
+                style: context.typography.price.copyWith(fontSize: 13),
               ),
             ],
           ),

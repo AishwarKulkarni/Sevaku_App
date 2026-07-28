@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 import 'package:sevaku/core/theme/text_styles.dart';
 
 class AppErrorState extends StatelessWidget {
@@ -23,20 +23,20 @@ class AppErrorState extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: BrandColors.error.withValues(alpha: 0.1),
+              color: context.colors.error.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.error_outline_rounded,
               size: 48,
-              color: BrandColors.error,
+              color: context.colors.error,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: BrandColors.textSecondary,
+            style: context.typography.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -45,15 +45,21 @@ class AppErrorState extends StatelessWidget {
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: BrandColors.error.withValues(alpha: 0.1),
-                foregroundColor: BrandColors.error,
+                backgroundColor: context.colors.error.withValues(alpha: 0.1),
+                foregroundColor: context.colors.error,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              child: Text(retryLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
+              child: Text(
+                retryLabel,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ],

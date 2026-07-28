@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
@@ -140,7 +140,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        backgroundColor: BrandColors.lightGray,
+        backgroundColor: context.colors.lightGray,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(28),
@@ -151,22 +151,22 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: BrandColors.primaryGreen.withValues(alpha: 0.15),
+                  color: context.colors.primaryGreen.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_rounded,
-                  color: BrandColors.primaryGreen,
+                  color: context.colors.primaryGreen,
                   size: 40,
                 ),
               ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
               const SizedBox(height: 20),
-              Text('Success!', style: AppTextStyles.headingMedium),
+              Text('Success!', style: context.typography.headingMedium),
               const SizedBox(height: 8),
               Text(
                 'Your password has been reset successfully. You can now login with your new password.',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: BrandColors.textSecondary,
+                style: context.typography.bodySmall.copyWith(
+                  color: context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -197,9 +197,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         title: const Text('Forgot Password'),
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -214,7 +214,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             children: [
               Text(
                 _otpSent ? 'Reset Password' : 'Find Your Account',
-                style: AppTextStyles.headingLarge,
+                style: context.typography.headingLarge,
               ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
 
               const SizedBox(height: 12),
@@ -223,8 +223,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 _otpSent
                     ? 'Enter the 6-digit code sent to your email and choose a new password.'
                     : 'Enter your registered email address to receive a password reset code.',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: BrandColors.textSecondary,
+                style: context.typography.bodyMedium.copyWith(
+                  color: context.colors.textSecondary,
                 ),
               ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
 
@@ -303,8 +303,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     },
                     child: Text(
                       'Use a different email',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: BrandColors.primaryGreen,
+                      style: context.typography.bodyMedium.copyWith(
+                        color: context.colors.primaryGreen,
                       ),
                     ),
                   ),

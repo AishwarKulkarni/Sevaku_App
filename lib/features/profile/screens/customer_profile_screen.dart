@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
+import 'package:sevaku/core/theme/theme_provider.dart';
 
 class CustomerProfileScreen extends ConsumerWidget {
   const CustomerProfileScreen({super.key});
@@ -17,9 +18,9 @@ class CustomerProfileScreen extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         title: const Text('Profile'),
         actions: [
           IconButton(
@@ -44,7 +45,7 @@ class CustomerProfileScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: BrandColors.primaryGreen,
+                        color: context.colors.primaryGreen,
                         width: 3,
                       ),
                       image: resolveImageProvider(user?.photoUrl) != null
@@ -55,7 +56,11 @@ class CustomerProfileScreen extends ConsumerWidget {
                           : null,
                     ),
                     child: resolveImageProvider(user?.photoUrl) == null
-                        ? const Icon(Icons.person, size: 48, color: BrandColors.textMuted)
+                        ? Icon(
+                            Icons.person,
+                            size: 48,
+                            color: context.colors.textMuted,
+                          )
                         : null,
                   ),
                   Positioned(
@@ -74,22 +79,30 @@ class CustomerProfileScreen extends ConsumerWidget {
                         if (picked == null) return;
                         final storage = ref.read(storageServiceProvider);
                         final firestore = ref.read(firestoreServiceProvider);
-                        final path = await storage.uploadProfilePhoto(user.uid, picked);
-                        await firestore.updateUser(user.uid, {'photo_url': path});
+                        final path = await storage.uploadProfilePhoto(
+                          user.uid,
+                          picked,
+                        );
+                        await firestore.updateUser(user.uid, {
+                          'photo_url': path,
+                        });
                         ref.read(authProvider.notifier).refreshUser();
                       },
                       child: Container(
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: BrandColors.primaryGreen,
+                          color: context.colors.primaryGreen,
                           shape: BoxShape.circle,
-                          border: Border.all(color: BrandColors.shadeBlack, width: 3),
+                          border: Border.all(
+                            color: context.colors.shadeBlack,
+                            width: 3,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt_outlined,
                           size: 14,
-                          color: BrandColors.shadeBlack,
+                          color: context.colors.shadeBlack,
                         ),
                       ),
                     ),
@@ -103,25 +116,27 @@ class CustomerProfileScreen extends ConsumerWidget {
             // Name & Role
             Text(
               user?.name ?? 'User',
-              style: AppTextStyles.headingMedium,
+              style: context.typography.headingMedium,
             ).animate().fadeIn(delay: 100.ms),
             const SizedBox(height: 4),
             Text(
               user?.email ?? '',
-              style: AppTextStyles.bodySmall.copyWith(color: BrandColors.textMuted),
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.textMuted,
+              ),
             ).animate().fadeIn(delay: 150.ms),
 
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
               decoration: BoxDecoration(
-                color: BrandColors.primaryGreen.withValues(alpha: 0.12),
+                color: context.colors.primaryGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 (user?.role ?? 'customer').toUpperCase(),
-                style: AppTextStyles.caption.copyWith(
-                  color: BrandColors.primaryGreen,
+                style: context.typography.caption.copyWith(
+                  color: context.colors.primaryGreen,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                 ),
@@ -138,6 +153,39 @@ class CustomerProfileScreen extends ConsumerWidget {
                 context.push('/edit-profile');
               },
             ).animate().fadeIn(delay: 300.ms).slideX(begin: -0.05),
+            
+            // Theme Toggle
+            Container(
+              margin: const EdgeInsets.only(bottom: 6),
+              child: ListTile(
+                onTap: () {
+                  ref.read(themeProvider.notifier).toggleTheme();
+                },
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                tileColor: context.colors.lightGray,
+                leading: Icon(
+                  ref.watch(themeProvider) == ThemeMode.light 
+                      ? Icons.light_mode_outlined 
+                      : Icons.dark_mode_outlined, 
+                  color: context.colors.white, 
+                  size: 20
+                ),
+                title: Text('Dark Mode', style: context.typography.bodyMedium),
+                trailing: Switch(
+                  value: ref.watch(themeProvider) == ThemeMode.dark,
+                  onChanged: (value) {
+                    ref.read(themeProvider.notifier).toggleTheme();
+                  },
+                  activeColor: context.colors.primaryGreen,
+                  activeTrackColor: context.colors.primaryGreen.withValues(alpha: 0.3),
+                  inactiveThumbColor: context.colors.textMuted,
+                  inactiveTrackColor: context.colors.surfaceLight,
+                ),
+              ),
+            ).animate().fadeIn(delay: 325.ms).slideX(begin: -0.05),
+
             _ProfileMenuItem(
               icon: Icons.location_on_outlined,
               title: 'My Addresses',
@@ -172,25 +220,66 @@ class CustomerProfileScreen extends ConsumerWidget {
                 if (context.mounted) context.go('/');
               },
               width: double.infinity,
-              backgroundColor: BrandColors.error.withValues(alpha: 0.15),
-              foregroundColor: BrandColors.error,
-              child: const Text(
+              backgroundColor: context.colors.error.withValues(alpha: 0.15),
+              foregroundColor: context.colors.error,
+              child: Text(
                 'Sign Out',
                 style: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: BrandColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ).animate().fadeIn(delay: 600.ms),
 
+            const SizedBox(height: 16),
+
+            AppButton(
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: context.colors.shadeBlack,
+                    title: Text('Delete Account', style: context.typography.headingMedium),
+                    content: Text('Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.', style: context.typography.bodyMedium),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text('Cancel', style: context.typography.bodyMedium.copyWith(color: context.colors.textMuted)),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text('Delete', style: context.typography.bodyMedium.copyWith(color: context.colors.error)),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true) {
+                  if (context.mounted) {
+                    await ref.read(authProvider.notifier).deleteAccount();
+                    if (context.mounted) context.go('/');
+                  }
+                }
+              },
+              width: double.infinity,
+              backgroundColor: context.colors.error,
+              foregroundColor: context.colors.white,
+              child: const Text(
+                'Delete Account',
+                style: TextStyle(
+                  fontFamily: 'Lexend',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ).animate().fadeIn(delay: 650.ms),
+
             const SizedBox(height: 32),
 
-            Text(
-              'Sevaku v1.0.0',
-              style: AppTextStyles.caption,
-            ),
+            Text('Sevaku v1.0.0', style: context.typography.caption),
 
             const SizedBox(height: 80),
           ],
@@ -220,23 +309,12 @@ class _ProfileMenuItem extends StatelessWidget {
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        tileColor: BrandColors.lightGray,
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: BrandColors.surfaceLight,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: BrandColors.white, size: 20),
-        ),
-        title: Text(
-          title,
-          style: AppTextStyles.bodyMedium,
-        ),
-        trailing: const Icon(
+        tileColor: context.colors.lightGray,
+        leading: Icon(icon, color: context.colors.white, size: 20),
+        title: Text(title, style: context.typography.bodyMedium),
+        trailing: Icon(
           Icons.chevron_right,
-          color: BrandColors.textMuted,
+          color: context.colors.textMuted,
           size: 22,
         ),
       ),

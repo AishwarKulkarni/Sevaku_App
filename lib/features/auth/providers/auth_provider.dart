@@ -41,7 +41,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final ApiService _apiService;
 
   AuthNotifier(this._authService, this._apiService)
-      : super(const AuthState(status: AuthStatus.initial)) {
+    : super(const AuthState(status: AuthStatus.initial)) {
     _init();
   }
 
@@ -49,12 +49,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> _init() async {
     state = state.copyWith(isLoading: true);
     final user = await _authService.getMe();
-    
+
     if (user != null) {
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } else {
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
@@ -66,10 +63,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final user = await _authService.signInWithEmail(email, password);
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -81,14 +75,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // ─── Register ────────────────────────────────────────────────
 
   Future<void> register(
-      String name, String email, String phone, String password, String role) async {
+    String name,
+    String email,
+    String phone,
+    String password,
+    String role,
+  ) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final user = await _authService.registerWithEmail(name, email, password, role, phone, '');
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
+      final user = await _authService.registerWithEmail(
+        name,
+        email,
+        password,
+        role,
+        phone,
+        '',
       );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -125,6 +128,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
+  // ─── Delete Account ──────────────────────────────────────────
+
+  Future<void> deleteAccount() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _authService.deleteAccount();
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to delete account. Please try again.',
+      );
+    }
+  }
+
   // ─── Password Reset ─────────────────────────────────────────
 
   Future<void> sendPasswordReset(String email) async {
@@ -156,7 +174,9 @@ final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
 // Temporary alias for migration
 final firestoreServiceProvider = apiServiceProvider;
-final storageServiceProvider = Provider<StorageService>((ref) => StorageService());
+final storageServiceProvider = Provider<StorageService>(
+  (ref) => StorageService(),
+);
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(

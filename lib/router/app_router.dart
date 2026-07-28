@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sevaku/features/auth/screens/splash_screen.dart';
 import 'package:sevaku/features/auth/screens/get_started_screen.dart';
 import 'package:sevaku/features/auth/screens/login_screen.dart';
 import 'package:sevaku/features/auth/screens/register_screen.dart';
@@ -47,19 +48,27 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/splash',
     refreshListenable: notifier,
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       
       final isAuth = authState.status == AuthStatus.authenticated;
       final isInit = authState.status == AuthStatus.initial;
+      final isSplash = state.uri.path == '/splash';
       final isGoingToAuth = state.uri.path == '/' ||
           state.uri.path == '/login' ||
           state.uri.path == '/register' ||
-          state.uri.path == '/forgot-password';
+          state.uri.path == '/forgot-password' ||
+          isSplash;
 
-      if (isInit) return null;
+      if (isInit) return isSplash ? null : '/splash';
+
+      if (isSplash) {
+         return isAuth 
+             ? (authState.user?.role == AppConstants.roleCustomer ? '/customer' : '/worker') 
+             : '/';
+      }
 
       if (!isAuth && !isGoingToAuth) {
         return '/login';
@@ -73,6 +82,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+    // Splash
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     // Get Started
     GoRoute(
       path: '/',

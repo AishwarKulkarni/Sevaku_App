@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
@@ -64,13 +64,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Welcome
                 Text(
                   'Welcome back',
-                  style: AppTextStyles.headingLarge,
+                  style: context.typography.headingLarge,
                 ).animate().fadeIn(delay: 200.ms),
                 const SizedBox(height: 4),
                 Text(
                   'Sign in to continue',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: BrandColors.textSecondary,
+                  style: context.typography.bodyMedium.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ).animate().fadeIn(delay: 300.ms),
 
@@ -103,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
                       size: 20,
-                      color: BrandColors.textMuted,
+                      color: context.colors.textMuted,
                     ),
                     onPressed: () =>
                         setState(() => _showPassword = !_showPassword),
@@ -159,15 +159,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // // Or divider
                 // Row(
                 //   children: [
-                //     const Expanded(child: Divider(color: BrandColors.divider)),
+                //     const Expanded(child: Divider(color: context.colors.divider)),
                 //     Padding(
                 //       padding: const EdgeInsets.symmetric(horizontal: 16),
                 //       child: Text(
                 //         'or continue with',
-                //         style: AppTextStyles.caption,
+                //         style: context.typography.caption,
                 //       ),
                 //     ),
-                //     const Expanded(child: Divider(color: BrandColors.divider)),
+                //     const Expanded(child: Divider(color: context.colors.divider)),
                 //   ],
                 // ).animate().fadeIn(delay: 700.ms),
 
@@ -184,7 +184,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 //   icon: Icons.g_mobiledata_rounded,
                 //   child: Text(
                 //     'Google',
-                //     style: AppTextStyles.bodyMedium.copyWith(
+                //     style: context.typography.bodyMedium.copyWith(
                 //       fontWeight: FontWeight.w500,
                 //     ),
                 //   ),
@@ -199,16 +199,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         "Don't have an account? ",
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: BrandColors.textMuted,
+                        style: context.typography.bodySmall.copyWith(
+                          color: context.colors.textMuted,
                         ),
                       ),
                       GestureDetector(
                         onTap: () => context.go('/register'),
                         child: Text(
                           'Register',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: BrandColors.primaryGreen,
+                          style: context.typography.bodySmall.copyWith(
+                            color: context.colors.primaryGreen,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -45,18 +45,16 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onTap,
       focusNode: focusNode,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'Lexend',
         fontSize: 14,
-        color: BrandColors.white,
+        color: context.colors.white,
       ),
-      cursorColor: BrandColors.primaryGreen,
+      cursorColor: context.colors.primaryGreen,
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
-        prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, size: 20)
-            : null,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20) : null,
         suffixIcon: suffixIcon,
       ),
     );

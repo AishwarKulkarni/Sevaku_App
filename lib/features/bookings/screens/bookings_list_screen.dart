@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/providers/data_providers.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
@@ -43,9 +43,9 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
     );
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         title: const Text('My Bookings'),
         bottom: TabBar(
           controller: _tabController,
@@ -104,8 +104,8 @@ class _BookingsListScreenState extends ConsumerState<BookingsListScreen>
             ],
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primaryGreen),
         ),
         error: (err, _) => AppErrorState(
           message: 'Error loading bookings',
@@ -137,8 +137,8 @@ class _BookingsList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (bookings.isEmpty) {
       return RefreshIndicator(
-        color: BrandColors.primaryGreen,
-        backgroundColor: BrandColors.lightGray,
+        color: context.colors.primaryGreen,
+        backgroundColor: context.colors.lightGray,
         onRefresh: onRefresh,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -152,8 +152,8 @@ class _BookingsList extends StatelessWidget {
     }
 
     return RefreshIndicator(
-      color: BrandColors.primaryGreen,
-      backgroundColor: BrandColors.lightGray,
+      color: context.colors.primaryGreen,
+      backgroundColor: context.colors.lightGray,
       onRefresh: onRefresh,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -207,7 +207,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to update booking status: $e'),
-            backgroundColor: BrandColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -221,7 +221,15 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     setState(() => _isProcessingPayment = true);
 
     try {
-      // Mock payment gateway delay
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Processing Payment...'),
+            backgroundColor: context.colors.info,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
       await Future.delayed(const Duration(seconds: 2));
       final firestore = ref.read(firestoreServiceProvider);
       await firestore.updatePaymentStatus(widget.booking.id, 'paid');
@@ -234,9 +242,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Payment successful! Job completed.'),
-            backgroundColor: BrandColors.success,
+            backgroundColor: context.colors.success,
           ),
         );
 
@@ -253,9 +261,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Payment failed. Please try again.'),
-            backgroundColor: BrandColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -269,7 +277,15 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     setState(() => _isGettingPayment = true);
 
     try {
-      // Mock QR scanning delay / future placeholder for QR overlay
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Scanning QR Code...'),
+            backgroundColor: context.colors.info,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
       await Future.delayed(const Duration(seconds: 2));
       final firestore = ref.read(firestoreServiceProvider);
       await firestore.updatePaymentStatus(widget.booking.id, 'paid');
@@ -282,18 +298,18 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Payment received via QR! Job completed.'),
-            backgroundColor: BrandColors.success,
+            backgroundColor: context.colors.success,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Failed to receive payment. Please try again.'),
-            backgroundColor: BrandColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -352,31 +368,31 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: BrandColors.lightGray,
+          color: context.colors.lightGray,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: BrandColors.primaryGreen.withValues(alpha: 0.3),
+            color: context.colors.primaryGreen.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.check_circle,
-              color: BrandColors.primaryGreen,
+              color: context.colors.primaryGreen,
               size: 48,
             ),
             const SizedBox(height: 12),
             Text(
               'Payment Successful!',
-              style: AppTextStyles.headingSmall.copyWith(
-                color: BrandColors.primaryGreen,
+              style: context.typography.headingSmall.copyWith(
+                color: context.colors.primaryGreen,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'How was your experience with ${widget.booking.workerName}?',
-              style: AppTextStyles.bodyMedium,
+              style: context.typography.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -393,7 +409,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                       index < _rating
                           ? Icons.star_rounded
                           : Icons.star_outline_rounded,
-                      color: BrandColors.warning,
+                      color: context.colors.warning,
                       size: 36,
                     ),
                   ),
@@ -414,7 +430,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: BrandColors.divider),
+                      side: BorderSide(color: context.colors.divider),
                     ),
                     child: const Text('Skip'),
                   ),
@@ -452,9 +468,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
 
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text('Thanks for your feedback!'),
-                                    backgroundColor: BrandColors.success,
+                                    backgroundColor: context.colors.success,
                                   ),
                                 );
 
@@ -472,9 +488,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                             } catch (e) {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text('Failed to submit review.'),
-                                    backgroundColor: BrandColors.error,
+                                    backgroundColor: context.colors.error,
                                   ),
                                 );
                                 setState(() => _isSubmittingRating = false);
@@ -482,12 +498,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                             }
                           },
                     child: _isSubmittingRating
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: BrandColors.shadeBlack,
+                              color: context.colors.shadeBlack,
                             ),
                           )
                         : const Text('Submit'),
@@ -516,7 +532,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: BrandColors.lightGray,
+        color: context.colors.lightGray,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: statusColor.withValues(alpha: 0.2),
@@ -531,13 +547,13 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: BrandColors.surfaceLight,
+                backgroundColor: context.colors.surfaceLight,
                 backgroundImage: resolveImageProvider(displayPhoto),
                 child: resolveImageProvider(displayPhoto) == null
-                    ? const Icon(
+                    ? Icon(
                         Icons.person,
                         size: 22,
-                        color: BrandColors.textMuted,
+                        color: context.colors.textMuted,
                       )
                     : null,
               ),
@@ -546,11 +562,11 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(displayName, style: AppTextStyles.labelLarge),
+                    Text(displayName, style: context.typography.labelLarge),
                     const SizedBox(height: 2),
                     Text(
                       widget.booking.category.toUpperCase(),
-                      style: AppTextStyles.caption.copyWith(fontSize: 10),
+                      style: context.typography.caption.copyWith(fontSize: 10),
                     ),
                   ],
                 ),
@@ -566,7 +582,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 ),
                 child: Text(
                   statusLabel,
-                  style: AppTextStyles.caption.copyWith(
+                  style: context.typography.caption.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 10,
@@ -576,16 +592,16 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
             ],
           ),
 
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(color: BrandColors.divider, height: 1),
+            child: Divider(color: context.colors.divider, height: 1),
           ),
 
           // Description
           Text(
             widget.booking.description,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: BrandColors.textSecondary,
+            style: context.typography.bodySmall.copyWith(
+              color: context.colors.textSecondary,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -613,14 +629,14 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 children: [
                   Text(
                     '₹${widget.booking.totalAmount.toInt()}',
-                    style: AppTextStyles.price.copyWith(fontSize: 16),
+                    style: context.typography.price.copyWith(fontSize: 16),
                   ),
                   Text(
                     widget.booking.paymentStatus == 'paid' ? 'Paid' : 'Unpaid',
-                    style: AppTextStyles.caption.copyWith(
+                    style: context.typography.caption.copyWith(
                       color: widget.booking.paymentStatus == 'paid'
-                          ? BrandColors.primaryGreen
-                          : BrandColors.error,
+                          ? context.colors.primaryGreen
+                          : context.colors.error,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -645,19 +661,19 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                       onPressed: _isStartingChat ? null : _openChat,
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
-                        foregroundColor: BrandColors.white,
-                        side: const BorderSide(color: BrandColors.divider),
+                        foregroundColor: context.colors.white,
+                        side: BorderSide(color: context.colors.divider),
                         shape: ContinuousRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                       child: _isStartingChat
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.primaryGreen,
+                                color: context.colors.primaryGreen,
                               ),
                             )
                           : const Icon(Icons.chat_bubble_outline, size: 18),
@@ -669,12 +685,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                     child: OutlinedButton.icon(
                       onPressed: _isStartingChat ? null : _openChat,
                       icon: _isStartingChat
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.primaryGreen,
+                                color: context.colors.primaryGreen,
                               ),
                             )
                           : const Icon(Icons.chat_bubble_outline, size: 16),
@@ -683,8 +699,8 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                         style: TextStyle(fontFamily: 'Lexend', fontSize: 12),
                       ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: BrandColors.white,
-                        side: const BorderSide(color: BrandColors.divider),
+                        foregroundColor: context.colors.white,
+                        side: BorderSide(color: context.colors.divider),
                         shape: ContinuousRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -699,11 +715,8 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                           ? null
                           : () => _updateStatus('cancelled'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: BrandColors.error,
-                        side: const BorderSide(
-                          color: BrandColors.error,
-                          width: 1,
-                        ),
+                        foregroundColor: context.colors.error,
+                        side: BorderSide(color: context.colors.error, width: 1),
                         shape: ContinuousRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -721,12 +734,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                           ? null
                           : () => _updateStatus('accepted'),
                       child: _isUpdatingStatus
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.shadeBlack,
+                                color: context.colors.shadeBlack,
                               ),
                             )
                           : const Text(
@@ -748,12 +761,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                     child: ElevatedButton.icon(
                       onPressed: _isProcessingPayment ? null : _processPayment,
                       icon: _isProcessingPayment
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.white,
+                                color: context.colors.white,
                               ),
                             )
                           : const Icon(Icons.payment, size: 16),
@@ -770,12 +783,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                           ? null
                           : () => _updateStatus('in_progress'),
                       icon: _isUpdatingStatus
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.white,
+                                color: context.colors.white,
                               ),
                             )
                           : const Icon(Icons.play_arrow_rounded, size: 16),
@@ -790,12 +803,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                     child: ElevatedButton.icon(
                       onPressed: _isGettingPayment ? null : _getPayment,
                       icon: _isGettingPayment
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: BrandColors.white,
+                                color: context.colors.white,
                               ),
                             )
                           : const Icon(Icons.qr_code, size: 16),
@@ -816,17 +829,17 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
   Color _getStatusColor() {
     switch (widget.booking.status) {
       case 'pending':
-        return BrandColors.warning;
+        return context.colors.warning;
       case 'accepted':
-        return BrandColors.info;
+        return context.colors.info;
       case 'in_progress':
-        return BrandColors.primaryGreen;
+        return context.colors.primaryGreen;
       case 'completed':
-        return BrandColors.success;
+        return context.colors.success;
       case 'cancelled':
-        return BrandColors.error;
+        return context.colors.error;
       default:
-        return BrandColors.textMuted;
+        return context.colors.textMuted;
     }
   }
 
@@ -868,12 +881,12 @@ class _DetailChip extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: BrandColors.textMuted),
+        Icon(icon, size: 14, color: context.colors.textMuted),
         const SizedBox(width: 4),
         Flexible(
           child: Text(
             label,
-            style: AppTextStyles.caption.copyWith(fontSize: 10),
+            style: context.typography.caption.copyWith(fontSize: 10),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

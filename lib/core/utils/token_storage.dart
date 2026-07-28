@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../models/user_model.dart';
 
 class TokenStorage {
   static const _storage = FlutterSecureStorage();
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
+  static const _userKey = 'user_data';
 
   static Future<void> saveTokens({required String accessToken, required String refreshToken}) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
@@ -18,8 +21,25 @@ class TokenStorage {
     return await _storage.read(key: _refreshTokenKey);
   }
 
+  static Future<void> saveUser(UserModel user) async {
+    await _storage.write(key: _userKey, value: jsonEncode(user.toJson()));
+  }
+
+  static Future<UserModel?> getUser() async {
+    final userData = await _storage.read(key: _userKey);
+    if (userData != null) {
+      try {
+        return UserModel.fromJson(jsonDecode(userData));
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   static Future<void> clearTokens() async {
     await _storage.delete(key: _accessTokenKey);
     await _storage.delete(key: _refreshTokenKey);
+    await _storage.delete(key: _userKey);
   }
 }

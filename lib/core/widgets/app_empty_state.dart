@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 import 'package:sevaku/core/theme/text_styles.dart';
 
 class AppEmptyState extends StatelessWidget {
@@ -27,13 +27,13 @@ class AppEmptyState extends StatelessWidget {
           Icon(
             icon,
             size: 64,
-            color: BrandColors.textMuted.withValues(alpha: 0.4),
+            color: context.colors.textMuted.withValues(alpha: 0.4),
           ),
           const SizedBox(height: 16),
           Text(
             title,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: BrandColors.textMuted,
+            style: context.typography.bodyMedium.copyWith(
+              color: context.colors.textMuted,
             ),
             textAlign: TextAlign.center,
           ),
@@ -41,8 +41,8 @@ class AppEmptyState extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               subtitle!,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: BrandColors.textHint,
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.textHint,
               ),
               textAlign: TextAlign.center,
             ),
@@ -52,15 +52,20 @@ class AppEmptyState extends StatelessWidget {
             OutlinedButton(
               onPressed: onAction,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: BrandColors.divider),
+                side: BorderSide(color: context.colors.divider),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: Text(
                 actionLabel!,
-                style: AppTextStyles.labelLarge.copyWith(color: BrandColors.white),
+                style: context.typography.labelLarge.copyWith(
+                  color: context.colors.white,
+                ),
               ),
             ),
           ],

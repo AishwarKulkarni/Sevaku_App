@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
 import 'package:sevaku/core/widgets/app_text_field.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/models/user_model.dart';
-import 'package:sevaku/models/worker_model.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -24,7 +23,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   bool _isSaving = false;
 
   UserModel? _baseUser;
-  WorkerModel? _workerProfile;
 
   // Base fields
   final _nameCtrl = TextEditingController();
@@ -67,7 +65,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           .read(firestoreServiceProvider)
           .getWorker(user.uid);
       if (worker != null) {
-        _workerProfile = worker;
         _bioCtrl.text = worker.bio;
         _categoryCtrl.text = worker.category;
         _hourlyRateCtrl.text = worker.hourlyRate > 0
@@ -167,10 +164,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoadingData) {
-      return const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      return Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+          child: CircularProgressIndicator(color: context.colors.primaryGreen),
         ),
       );
     }
@@ -178,9 +175,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final isWorker = _baseUser?.role == 'worker';
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         title: const Text('Edit Profile'),
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -196,7 +193,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             children: [
               Text(
                 'Basic Info',
-                style: AppTextStyles.headingSmall,
+                style: context.typography.headingSmall,
               ).animate().fadeIn(),
               const SizedBox(height: 16),
 
@@ -228,7 +225,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               if (isWorker) ...[
                 Text(
                   'Worker Details',
-                  style: AppTextStyles.headingSmall,
+                  style: context.typography.headingSmall,
                 ).animate().fadeIn(delay: 250.ms),
                 const SizedBox(height: 16),
 
@@ -238,7 +235,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: BrandColors.lightGray,
+                    color: context.colors.lightGray,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
@@ -246,11 +243,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     children: [
                       Text(
                         'Available for jobs?',
-                        style: AppTextStyles.bodyMedium,
+                        style: context.typography.bodyMedium,
                       ),
                       Switch(
                         value: _isAvailable,
-                        activeColor: BrandColors.primaryGreen,
+                        activeColor: context.colors.primaryGreen,
                         onChanged: (val) => setState(() => _isAvailable = val),
                       ),
                     ],

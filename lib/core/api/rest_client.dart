@@ -22,6 +22,9 @@ abstract class RestClient {
   @GET('/auth/me')
   Future<UserModel> getMe();
 
+  @DELETE('/auth/me')
+  Future<void> deleteAccount();
+
   @POST('/auth/forgot-password')
   Future<dynamic> forgotPassword(@Body() Map<String, dynamic> body);
 

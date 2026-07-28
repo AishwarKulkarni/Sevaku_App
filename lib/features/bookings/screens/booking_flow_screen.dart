@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
@@ -40,8 +40,8 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.workerId == null) {
-      return const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      return Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(child: Text('Invalid worker ID')),
       );
     }
@@ -52,12 +52,12 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
     return workerAsync.when(
       data: (worker) {
         if (worker == null) {
-          return const Scaffold(
-            backgroundColor: BrandColors.shadeBlack,
+          return Scaffold(
+            backgroundColor: context.colors.shadeBlack,
             body: Center(
               child: Text(
                 'Worker not found',
-                style: TextStyle(color: BrandColors.white),
+                style: TextStyle(color: context.colors.white),
               ),
             ),
           );
@@ -66,9 +66,9 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
         final totalAmount = worker.hourlyRate * _estimatedHours;
 
         return Scaffold(
-          backgroundColor: BrandColors.shadeBlack,
+          backgroundColor: context.colors.shadeBlack,
           appBar: AppBar(
-            backgroundColor: BrandColors.shadeBlack,
+            backgroundColor: context.colors.shadeBlack,
             title: const Text('Book Service'),
             leading: IconButton(
               onPressed: () => context.pop(),
@@ -84,20 +84,20 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: BrandColors.lightGray,
+                    color: context.colors.lightGray,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     children: [
                       CircleAvatar(
                         radius: 28,
-                        backgroundColor: BrandColors.surfaceLight,
+                        backgroundColor: context.colors.surfaceLight,
                         backgroundImage: resolveImageProvider(worker.photoUrl),
                         child: resolveImageProvider(worker.photoUrl) == null
-                            ? const Icon(
+                            ? Icon(
                                 Icons.person,
                                 size: 28,
-                                color: BrandColors.textMuted,
+                                color: context.colors.textMuted,
                               )
                             : null,
                       ),
@@ -106,26 +106,33 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(worker.name, style: AppTextStyles.labelLarge),
+                            Text(
+                              worker.name,
+                              style: context.typography.labelLarge,
+                            ),
                             const SizedBox(height: 2),
                             Text(
                               '₹${worker.hourlyRate.toInt()}/hr',
-                              style: AppTextStyles.price.copyWith(fontSize: 14),
+                              style: context.typography.price.copyWith(
+                                fontSize: 14,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.star_rounded,
-                            color: BrandColors.starYellow,
+                            color: context.colors.starYellow,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             worker.rating.toStringAsFixed(1),
-                            style: AppTextStyles.rating.copyWith(fontSize: 13),
+                            style: context.typography.rating.copyWith(
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
@@ -138,7 +145,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 // Date Picker
                 Text(
                   'Select Date',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 100.ms),
                 const SizedBox(height: 12),
                 GestureDetector(
@@ -151,9 +158,9 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       builder: (context, child) {
                         return Theme(
                           data: ThemeData.dark().copyWith(
-                            colorScheme: const ColorScheme.dark(
-                              primary: BrandColors.primaryGreen,
-                              surface: BrandColors.lightGray,
+                            colorScheme: ColorScheme.dark(
+                              primary: context.colors.primaryGreen,
+                              surface: context.colors.lightGray,
                             ),
                           ),
                           child: child!,
@@ -168,11 +175,11 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: BrandColors.lightGray,
+                      color: context.colors.lightGray,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: _selectedDate != null
-                            ? BrandColors.primaryGreen.withValues(alpha: 0.3)
+                            ? context.colors.primaryGreen.withValues(alpha: 0.3)
                             : Colors.transparent,
                       ),
                     ),
@@ -181,8 +188,8 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                         Icon(
                           Icons.calendar_today_rounded,
                           color: _selectedDate != null
-                              ? BrandColors.primaryGreen
-                              : BrandColors.textMuted,
+                              ? context.colors.primaryGreen
+                              : context.colors.textMuted,
                           size: 20,
                         ),
                         const SizedBox(width: 12),
@@ -190,10 +197,10 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                           _selectedDate != null
                               ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
                               : 'Choose a date',
-                          style: AppTextStyles.bodyMedium.copyWith(
+                          style: context.typography.bodyMedium.copyWith(
                             color: _selectedDate != null
-                                ? BrandColors.white
-                                : BrandColors.textHint,
+                                ? context.colors.white
+                                : context.colors.textHint,
                           ),
                         ),
                       ],
@@ -206,7 +213,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 // Time Picker
                 Text(
                   'Select Time',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 200.ms),
                 const SizedBox(height: 12),
                 GestureDetector(
@@ -217,9 +224,9 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       builder: (context, child) {
                         return Theme(
                           data: ThemeData.dark().copyWith(
-                            colorScheme: const ColorScheme.dark(
-                              primary: BrandColors.primaryGreen,
-                              surface: BrandColors.lightGray,
+                            colorScheme: ColorScheme.dark(
+                              primary: context.colors.primaryGreen,
+                              surface: context.colors.lightGray,
                             ),
                           ),
                           child: child!,
@@ -234,11 +241,11 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: BrandColors.lightGray,
+                      color: context.colors.lightGray,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: _selectedTime != null
-                            ? BrandColors.primaryGreen.withValues(alpha: 0.3)
+                            ? context.colors.primaryGreen.withValues(alpha: 0.3)
                             : Colors.transparent,
                       ),
                     ),
@@ -247,8 +254,8 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                         Icon(
                           Icons.access_time_rounded,
                           color: _selectedTime != null
-                              ? BrandColors.primaryGreen
-                              : BrandColors.textMuted,
+                              ? context.colors.primaryGreen
+                              : context.colors.textMuted,
                           size: 20,
                         ),
                         const SizedBox(width: 12),
@@ -256,10 +263,10 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                           _selectedTime != null
                               ? _selectedTime!.format(context)
                               : 'Choose a time',
-                          style: AppTextStyles.bodyMedium.copyWith(
+                          style: context.typography.bodyMedium.copyWith(
                             color: _selectedTime != null
-                                ? BrandColors.white
-                                : BrandColors.textHint,
+                                ? context.colors.white
+                                : context.colors.textHint,
                           ),
                         ),
                       ],
@@ -272,7 +279,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 // Estimated hours
                 Text(
                   'Estimated Duration',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 300.ms),
                 const SizedBox(height: 12),
                 Container(
@@ -281,7 +288,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: BrandColors.lightGray,
+                    color: context.colors.lightGray,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
@@ -294,11 +301,11 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                           }
                         },
                         icon: const Icon(Icons.remove_circle_outline),
-                        color: BrandColors.textSecondary,
+                        color: context.colors.textSecondary,
                       ),
                       Text(
                         '$_estimatedHours hours',
-                        style: AppTextStyles.headingSmall,
+                        style: context.typography.headingSmall,
                       ),
                       IconButton(
                         onPressed: () {
@@ -307,7 +314,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                           }
                         },
                         icon: const Icon(Icons.add_circle_outline),
-                        color: BrandColors.primaryGreen,
+                        color: context.colors.primaryGreen,
                       ),
                     ],
                   ),
@@ -318,7 +325,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 // Description
                 Text(
                   'Job Description',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 400.ms),
                 const SizedBox(height: 12),
                 AppTextField(
@@ -332,7 +339,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 // Address
                 Text(
                   'Address',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ).animate().fadeIn(delay: 500.ms),
                 const SizedBox(height: 12),
                 AppTextField(
@@ -340,11 +347,17 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                   hintText: 'Enter your address',
                   prefixIcon: Icons.location_on_outlined,
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.my_location, color: BrandColors.primaryGreen),
+                    icon: Icon(
+                      Icons.my_location,
+                      color: context.colors.primaryGreen,
+                    ),
                     onPressed: () async {
                       try {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Fetching your location...'), duration: Duration(seconds: 1)),
+                          const SnackBar(
+                            content: Text('Fetching your location...'),
+                            duration: Duration(seconds: 1),
+                          ),
                         );
                         final service = ref.read(locationServiceProvider);
                         final address = await service.getCurrentAddress();
@@ -354,7 +367,9 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       } catch (e) {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Could not fetch location: $e')),
+                            SnackBar(
+                              content: Text('Could not fetch location: $e'),
+                            ),
                           );
                         }
                       }
@@ -369,10 +384,10 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: BrandColors.lightGray,
+                    color: context.colors.lightGray,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: BrandColors.primaryGreen.withValues(alpha: 0.2),
+                      color: context.colors.primaryGreen.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -380,17 +395,19 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                       _PriceRow('Rate', '₹${worker.hourlyRate.toInt()}/hr'),
                       const SizedBox(height: 8),
                       _PriceRow('Duration', '$_estimatedHours hours'),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(color: BrandColors.divider),
+                        child: Divider(color: context.colors.divider),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Total', style: AppTextStyles.headingSmall),
+                          Text('Total', style: context.typography.headingSmall),
                           Text(
                             '₹${totalAmount.toInt()}',
-                            style: AppTextStyles.price.copyWith(fontSize: 22),
+                            style: context.typography.price.copyWith(
+                              fontSize: 22,
+                            ),
                           ),
                         ],
                       ),
@@ -488,18 +505,18 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
           ),
         );
       },
-      loading: () => const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      loading: () => Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+          child: CircularProgressIndicator(color: context.colors.primaryGreen),
         ),
       ),
-      error: (err, _) => const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      error: (err, _) => Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
           child: Text(
             'Error loading data',
-            style: TextStyle(color: BrandColors.error),
+            style: TextStyle(color: context.colors.error),
           ),
         ),
       ),
@@ -511,7 +528,7 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        backgroundColor: BrandColors.lightGray,
+        backgroundColor: context.colors.lightGray,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(28),
@@ -522,22 +539,25 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: BrandColors.primaryGreen.withValues(alpha: 0.15),
+                  color: context.colors.primaryGreen.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_rounded,
-                  color: BrandColors.primaryGreen,
+                  color: context.colors.primaryGreen,
                   size: 40,
                 ),
               ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
               const SizedBox(height: 20),
-              Text('Booking Confirmed!', style: AppTextStyles.headingMedium),
+              Text(
+                'Booking Confirmed!',
+                style: context.typography.headingMedium,
+              ),
               const SizedBox(height: 8),
               Text(
                 'Your booking has been placed successfully. The worker will confirm shortly.',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: BrandColors.textSecondary,
+                style: context.typography.bodySmall.copyWith(
+                  color: context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -579,11 +599,11 @@ class _PriceRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: BrandColors.textSecondary,
+          style: context.typography.bodySmall.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
-        Text(value, style: AppTextStyles.bodyMedium),
+        Text(value, style: context.typography.bodyMedium),
       ],
     );
   }

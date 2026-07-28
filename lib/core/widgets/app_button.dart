@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 
 class AppButton extends StatelessWidget {
   final VoidCallback? onTap;
@@ -37,16 +37,16 @@ class AppButton extends StatelessWidget {
           onPressed: isLoading ? null : onTap,
           style: OutlinedButton.styleFrom(
             side: BorderSide(
-              color: backgroundColor ?? BrandColors.lightGray,
+              color: backgroundColor ?? context.colors.lightGray,
               width: 1.5,
             ),
-            foregroundColor: foregroundColor ?? BrandColors.white,
+            foregroundColor: foregroundColor ?? context.colors.white,
             padding: padding,
             shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
           ),
-          child: _buildChild(),
+          child: _buildChild(context),
         ),
       );
     }
@@ -57,38 +57,36 @@ class AppButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? BrandColors.primaryGreen,
-          foregroundColor: foregroundColor ?? BrandColors.shadeBlack,
+          backgroundColor: backgroundColor ?? context.colors.primaryGreen,
+          foregroundColor: foregroundColor ?? context.colors.shadeBlack,
           elevation: 0,
           padding: padding,
           shape: ContinuousRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        child: _buildChild(),
+        child: _buildChild(context),
       ),
     );
   }
 
-  Widget _buildChild() {
+  Widget _buildChild(BuildContext context) {
     if (isLoading) {
       return SizedBox(
         width: 22,
         height: 22,
         child: CircularProgressIndicator(
           strokeWidth: 2.5,
-          color: isOutlined ? BrandColors.primaryGreen : BrandColors.shadeBlack,
+          color: isOutlined
+              ? context.colors.primaryGreen
+              : context.colors.shadeBlack,
         ),
       );
     }
     if (icon != null) {
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 8),
-          child,
-        ],
+        children: [Icon(icon, size: 20), const SizedBox(width: 8), child],
       );
     }
     return child;

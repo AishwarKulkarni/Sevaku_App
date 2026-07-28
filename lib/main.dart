@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sevaku/core/theme/app_theme.dart';
+import 'package:sevaku/core/theme/theme_provider.dart';
 import 'package:sevaku/firebase_options.dart';
 import 'package:sevaku/router/app_router.dart';
 
@@ -29,13 +30,16 @@ class SevakuApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeProvider);
     
     return MaterialApp.router(
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: 'Sevaku',
-      theme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       routerConfig: router,
     );
   }

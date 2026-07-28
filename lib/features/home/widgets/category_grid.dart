@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sevaku/core/constants/app_constants.dart';
 import 'package:sevaku/core/theme/brand_colors.dart';
@@ -70,8 +72,8 @@ class _CategoryItem extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             category.label,
-            style: AppTextStyles.caption.copyWith(
-              color: isSelected ? category.color : BrandColors.textSecondary,
+            style: context.typography.caption.copyWith(
+              color: isSelected ? category.color : context.colors.textSecondary,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               fontSize: 10,
             ),

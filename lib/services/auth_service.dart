@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:dio/dio.dart';
 import '../core/api/api_client.dart';
 import '../core/api/rest_client.dart';
 import '../core/utils/token_storage.dart';
@@ -22,6 +23,7 @@ class AuthService {
       accessToken: response.accessToken,
       refreshToken: response.refreshToken,
     );
+    await TokenStorage.saveUser(response.user);
     
     return response.user;
   }
@@ -41,6 +43,7 @@ class AuthService {
       accessToken: response.accessToken,
       refreshToken: response.refreshToken,
     );
+    await TokenStorage.saveUser(response.user);
     
     return response.user;
   }
@@ -51,9 +54,17 @@ class AuthService {
     if (token == null) return null;
     
     try {
-      return await _restClient.getMe();
+      final user = await _restClient.getMe();
+      await TokenStorage.saveUser(user);
+      return user;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await signOut();
+        return null;
+      }
+      return await TokenStorage.getUser();
     } catch (e) {
-      return null;
+      return await TokenStorage.getUser();
     }
   }
 
@@ -80,9 +91,9 @@ class AuthService {
     });
   }
 
-  // Delete account (Needs backend endpoint, placeholder for now)
+  // Delete account
   Future<void> deleteAccount() async {
+    await _restClient.deleteAccount();
     await signOut();
-    // Implementation for backend delete
   }
 }

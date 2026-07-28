@@ -1,44 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get darkTheme {
+  static ThemeData get darkTheme => _buildTheme(AppColors.dark, Brightness.dark);
+  static ThemeData get lightTheme => _buildTheme(AppColors.light, Brightness.light);
+
+  static ThemeData _buildTheme(AppColors colors, Brightness brightness) {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       fontFamily: 'Lexend',
-      scaffoldBackgroundColor: BrandColors.shadeBlack,
-      colorScheme: const ColorScheme.dark(
-        primary: BrandColors.primaryGreen,
-        onPrimary: BrandColors.shadeBlack,
-        secondary: BrandColors.primaryGreenLight,
-        onSecondary: BrandColors.shadeBlack,
-        surface: BrandColors.lightGray,
-        onSurface: BrandColors.white,
-        error: BrandColors.error,
-        onError: BrandColors.white,
+      scaffoldBackgroundColor: colors.shadeBlack,
+      colorScheme: ColorScheme(
+        brightness: brightness,
+        primary: colors.primaryGreen,
+        onPrimary: colors.shadeBlack,
+        secondary: colors.primaryGreenLight,
+        onSecondary: colors.shadeBlack,
+        surface: colors.lightGray,
+        onSurface: colors.white,
+        error: colors.error,
+        onError: colors.white,
       ),
+      extensions: [colors],
 
       // AppBar
-      appBarTheme: const AppBarTheme(
-        backgroundColor: BrandColors.shadeBlack,
-        foregroundColor: BrandColors.white,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colors.shadeBlack,
+        foregroundColor: colors.white,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
           fontFamily: 'Lexend',
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: BrandColors.white,
+          color: colors.white,
         ),
-        iconTheme: IconThemeData(color: BrandColors.white),
+        iconTheme: IconThemeData(color: colors.white),
       ),
 
       // Cards
       cardTheme: CardThemeData(
-        color: BrandColors.lightGray,
+        color: colors.lightGray,
         elevation: 0,
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(24),
@@ -49,8 +54,8 @@ class AppTheme {
       // Elevated Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(BrandColors.primaryGreen),
-          foregroundColor: WidgetStatePropertyAll(BrandColors.shadeBlack),
+          backgroundColor: WidgetStatePropertyAll(colors.primaryGreen),
+          foregroundColor: WidgetStatePropertyAll(colors.shadeBlack),
           elevation: const WidgetStatePropertyAll(0),
           padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -73,9 +78,9 @@ class AppTheme {
       // Outlined Buttons
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: const WidgetStatePropertyAll(BrandColors.white),
-          side: const WidgetStatePropertyAll(
-            BorderSide(color: BrandColors.lightGray, width: 1.5),
+          foregroundColor: WidgetStatePropertyAll(colors.white),
+          side: WidgetStatePropertyAll(
+            BorderSide(color: colors.lightGray, width: 1.5),
           ),
           padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -98,7 +103,7 @@ class AppTheme {
       // Text Buttons
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: const WidgetStatePropertyAll(BrandColors.primaryGreen),
+          foregroundColor: WidgetStatePropertyAll(colors.primaryGreen),
           textStyle: const WidgetStatePropertyAll(
             TextStyle(
               fontFamily: 'Lexend',
@@ -112,18 +117,18 @@ class AppTheme {
       // Input
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: BrandColors.lightGray,
-        hintStyle: const TextStyle(
+        fillColor: colors.lightGray,
+        hintStyle: TextStyle(
           fontFamily: 'Lexend',
-          color: BrandColors.textHint,
+          color: colors.textHint,
           fontSize: 14,
         ),
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           fontFamily: 'Lexend',
-          color: BrandColors.textSecondary,
+          color: colors.textSecondary,
         ),
-        prefixIconColor: BrandColors.textMuted,
-        suffixIconColor: BrandColors.textMuted,
+        prefixIconColor: colors.textMuted,
+        suffixIconColor: colors.textMuted,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -135,33 +140,33 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: BrandColors.primaryGreen,
+          borderSide: BorderSide(
+            color: colors.primaryGreen,
             width: 1.5,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: BrandColors.error,
+          borderSide: BorderSide(
+            color: colors.error,
             width: 1.5,
           ),
         ),
       ),
 
       // Bottom Navigation
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: BrandColors.shadeBlack,
-        selectedItemColor: BrandColors.primaryGreen,
-        unselectedItemColor: BrandColors.textMuted,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: colors.shadeBlack,
+        selectedItemColor: colors.primaryGreen,
+        unselectedItemColor: colors.textMuted,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        selectedLabelStyle: TextStyle(
+        selectedLabelStyle: const TextStyle(
           fontFamily: 'Lexend',
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
-        unselectedLabelStyle: TextStyle(
+        unselectedLabelStyle: const TextStyle(
           fontFamily: 'Lexend',
           fontSize: 11,
           fontWeight: FontWeight.w400,
@@ -170,11 +175,11 @@ class AppTheme {
 
       // Navigation Bar (Material 3)
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: BrandColors.shadeBlack,
-        indicatorColor: BrandColors.primaryGreen.withValues(alpha: 0.15),
+        backgroundColor: colors.shadeBlack,
+        indicatorColor: colors.primaryGreen.withValues(alpha: 0.15),
         surfaceTintColor: Colors.transparent,
-        labelTextStyle: WidgetStatePropertyAll(
-          const TextStyle(
+        labelTextStyle: const WidgetStatePropertyAll(
+          TextStyle(
             fontFamily: 'Lexend',
             fontSize: 11,
             fontWeight: FontWeight.w500,
@@ -184,12 +189,12 @@ class AppTheme {
 
       // Chips
       chipTheme: ChipThemeData(
-        backgroundColor: BrandColors.lightGray,
-        selectedColor: BrandColors.primaryGreen.withValues(alpha: 0.2),
-        labelStyle: const TextStyle(
+        backgroundColor: colors.lightGray,
+        selectedColor: colors.primaryGreen.withValues(alpha: 0.2),
+        labelStyle: TextStyle(
           fontFamily: 'Lexend',
           fontSize: 13,
-          color: BrandColors.white,
+          color: colors.white,
         ),
         side: BorderSide.none,
         shape: ContinuousRectangleBorder(
@@ -199,46 +204,46 @@ class AppTheme {
       ),
 
       // Bottom Sheet
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: BrandColors.cardDark,
-        shape: RoundedRectangleBorder(
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colors.cardDark,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
 
       // Dialog
       dialogTheme: DialogThemeData(
-        backgroundColor: BrandColors.lightGray,
+        backgroundColor: colors.lightGray,
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(32),
         ),
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontFamily: 'Lexend',
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: BrandColors.white,
+          color: colors.white,
         ),
       ),
 
       // Divider
-      dividerTheme: const DividerThemeData(
-        color: BrandColors.divider,
+      dividerTheme: DividerThemeData(
+        color: colors.divider,
         thickness: 0.5,
       ),
 
       // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: BrandColors.primaryGreen,
-        foregroundColor: BrandColors.shadeBlack,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colors.primaryGreen,
+        foregroundColor: colors.shadeBlack,
         elevation: 4,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
 
       // Tab Bar
       tabBarTheme: TabBarThemeData(
-        labelColor: BrandColors.primaryGreen,
-        unselectedLabelColor: BrandColors.textMuted,
-        indicatorColor: BrandColors.primaryGreen,
+        labelColor: colors.primaryGreen,
+        unselectedLabelColor: colors.textMuted,
+        indicatorColor: colors.primaryGreen,
         labelStyle: const TextStyle(
           fontFamily: 'Lexend',
           fontSize: 14,
@@ -252,18 +257,18 @@ class AppTheme {
       ),
 
       // ListTile
-      listTileTheme: const ListTileThemeData(
-        textColor: BrandColors.white,
-        iconColor: BrandColors.textSecondary,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      listTileTheme: ListTileThemeData(
+        textColor: colors.white,
+        iconColor: colors.textSecondary,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
 
       // Snackbar
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: BrandColors.lightGray,
-        contentTextStyle: const TextStyle(
+        backgroundColor: colors.lightGray,
+        contentTextStyle: TextStyle(
           fontFamily: 'Lexend',
-          color: BrandColors.white,
+          color: colors.white,
         ),
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(16),

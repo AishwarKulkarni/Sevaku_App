@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
 import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/features/home/widgets/category_grid.dart';
@@ -58,11 +58,11 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
     final allWorkersAsync = ref.watch(workersByCategoryProvider(null));
 
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       body: SafeArea(
         child: RefreshIndicator(
-          color: BrandColors.primaryGreen,
-          backgroundColor: BrandColors.lightGray,
+          color: context.colors.primaryGreen,
+          backgroundColor: context.colors.lightGray,
           onRefresh: () async {
             ref.invalidate(featuredWorkersProvider);
             ref.invalidate(workersByCategoryProvider(null));
@@ -88,14 +88,14 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                           children: [
                             Text(
                               _getGreeting(user?.name),
-                              style: AppTextStyles.headingMedium,
+                              style: context.typography.headingMedium,
                             ),
                             const SizedBox(height: 2),
                             Row(
                               children: [
                                 Icon(
                                   Icons.location_on_rounded,
-                                  color: BrandColors.textMuted,
+                                  color: context.colors.textMuted,
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
@@ -109,9 +109,10 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                                         addressAsync.value ??
                                             user?.city ??
                                             'fetching location...',
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          color: BrandColors.textMuted,
-                                        ),
+                                        style: context.typography.bodySmall
+                                            .copyWith(
+                                              color: context.colors.textMuted,
+                                            ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       );
@@ -151,24 +152,26 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: BrandColors.lightGray,
+                            color: context.colors.lightGray,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: BrandColors.divider.withValues(alpha: 0.3),
+                              color: context.colors.divider.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.search_rounded,
-                                color: BrandColors.textMuted,
+                                color: context.colors.textMuted,
                                 size: 22,
                               ),
                               const SizedBox(width: 10),
                               Text(
                                 'Search for services...',
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: BrandColors.textHint,
+                                style: context.typography.bodyMedium.copyWith(
+                                  color: context.colors.textHint,
                                 ),
                               ),
                             ],
@@ -234,9 +237,9 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                         },
                       );
                     },
-                    loading: () => const Center(
+                    loading: () => Center(
                       child: CircularProgressIndicator(
-                        color: BrandColors.primaryGreen,
+                        color: context.colors.primaryGreen,
                       ),
                     ),
                     error: (err, _) => AppErrorState(
@@ -275,12 +278,12 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                     }, childCount: workers.length.clamp(0, 5)),
                   );
                 },
-                loading: () => const SliverToBoxAdapter(
+                loading: () => SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Center(
                       child: CircularProgressIndicator(
-                        color: BrandColors.primaryGreen,
+                        color: context.colors.primaryGreen,
                       ),
                     ),
                   ),
@@ -366,10 +369,10 @@ class _IconBtn extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: BrandColors.lightGray,
+              color: context.colors.lightGray,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: BrandColors.white, size: 22),
+            child: Icon(icon, color: context.colors.white, size: 22),
           ),
           if (badge > 0)
             Positioned(
@@ -379,17 +382,20 @@ class _IconBtn extends StatelessWidget {
                 width: 16,
                 height: 16,
                 decoration: BoxDecoration(
-                  color: BrandColors.error,
+                  color: context.colors.error,
                   shape: BoxShape.circle,
-                  border: Border.all(color: BrandColors.shadeBlack, width: 1.5),
+                  border: Border.all(
+                    color: context.colors.shadeBlack,
+                    width: 1.5,
+                  ),
                 ),
                 child: Center(
                   child: Text(
                     '$badge',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 8,
                       fontWeight: FontWeight.bold,
-                      color: BrandColors.white,
+                      color: context.colors.white,
                     ),
                   ),
                 ),
@@ -413,19 +419,19 @@ class _ActiveBookingCard extends StatelessWidget {
 
     switch (booking.status) {
       case 'pending':
-        statusColor = BrandColors.warning;
+        statusColor = context.colors.warning;
         statusLabel = 'Pending';
         break;
       case 'accepted':
-        statusColor = BrandColors.info;
+        statusColor = context.colors.info;
         statusLabel = 'Accepted';
         break;
       case 'in_progress':
-        statusColor = BrandColors.primaryGreen;
+        statusColor = context.colors.primaryGreen;
         statusLabel = 'In Progress';
         break;
       default:
-        statusColor = BrandColors.textMuted;
+        statusColor = context.colors.textMuted;
         statusLabel = booking.status;
     }
 
@@ -433,7 +439,7 @@ class _ActiveBookingCard extends StatelessWidget {
       width: 260,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: BrandColors.cardDark,
+        color: context.colors.cardDark,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -443,13 +449,13 @@ class _ActiveBookingCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: BrandColors.surfaceLight,
+                backgroundColor: context.colors.surfaceLight,
                 backgroundImage: resolveImageProvider(booking.workerPhoto),
                 child: resolveImageProvider(booking.workerPhoto) == null
-                    ? const Icon(
+                    ? Icon(
                         Icons.person,
                         size: 18,
-                        color: BrandColors.textMuted,
+                        color: context.colors.textMuted,
                       )
                     : null,
               ),
@@ -460,13 +466,15 @@ class _ActiveBookingCard extends StatelessWidget {
                   children: [
                     Text(
                       booking.workerName,
-                      style: AppTextStyles.labelLarge.copyWith(fontSize: 13),
+                      style: context.typography.labelLarge.copyWith(
+                        fontSize: 13,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       booking.category.toString().toUpperCase(),
-                      style: AppTextStyles.caption.copyWith(fontSize: 9),
+                      style: context.typography.caption.copyWith(fontSize: 9),
                     ),
                   ],
                 ),
@@ -474,12 +482,12 @@ class _ActiveBookingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: BrandColors.white.withValues(alpha: 0.15),
+                  color: context.colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   statusLabel,
-                  style: AppTextStyles.caption.copyWith(
+                  style: context.typography.caption.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 9,
@@ -491,7 +499,7 @@ class _ActiveBookingCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             booking.description,
-            style: AppTextStyles.bodySmall.copyWith(fontSize: 11),
+            style: context.typography.bodySmall.copyWith(fontSize: 11),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -501,11 +509,11 @@ class _ActiveBookingCard extends StatelessWidget {
             children: [
               Text(
                 '₹${booking.totalAmount.toInt()}',
-                style: AppTextStyles.price.copyWith(fontSize: 13),
+                style: context.typography.price.copyWith(fontSize: 13),
               ),
               Text(
                 _formatDate(booking.scheduledDate),
-                style: AppTextStyles.caption,
+                style: context.typography.caption,
               ),
             ],
           ),

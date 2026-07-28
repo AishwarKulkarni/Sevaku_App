@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sevaku/core/utils/image_helper.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/constants/app_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sevaku/core/widgets/app_button.dart';
@@ -46,13 +46,10 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
           );
       if (mounted) context.push('/chat/$chatId');
     } catch (e) {
-      print('Error opening chat: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not open chat: $e'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not open chat: $e')));
       }
     } finally {
       if (mounted) setState(() => _isStartingChat = false);
@@ -68,12 +65,12 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
       data: (worker) {
         if (worker == null) {
           return Scaffold(
-            backgroundColor: BrandColors.shadeBlack,
-            appBar: AppBar(backgroundColor: BrandColors.shadeBlack),
-            body: const Center(
+            backgroundColor: context.colors.shadeBlack,
+            appBar: AppBar(backgroundColor: context.colors.shadeBlack),
+            body: Center(
               child: Text(
                 'Worker not found',
-                style: TextStyle(color: BrandColors.white),
+                style: TextStyle(color: context.colors.white),
               ),
             ),
           );
@@ -84,26 +81,26 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
         final catColor = _getCategoryColor(worker.category);
 
         return Scaffold(
-          backgroundColor: BrandColors.shadeBlack,
+          backgroundColor: context.colors.shadeBlack,
           body: CustomScrollView(
             slivers: [
               // Hero Image AppBar
               SliverAppBar(
                 expandedHeight: 280,
                 pinned: true,
-                backgroundColor: BrandColors.shadeBlack,
+                backgroundColor: context.colors.shadeBlack,
                 leading: Padding(
                   padding: const EdgeInsets.all(8),
                   child: CircleAvatar(
-                    backgroundColor: BrandColors.shadeBlack.withValues(
+                    backgroundColor: context.colors.shadeBlack.withValues(
                       alpha: 0.6,
                     ),
                     child: IconButton(
                       onPressed: () => context.pop(),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new,
                         size: 18,
-                        color: BrandColors.white,
+                        color: context.colors.white,
                       ),
                     ),
                   ),
@@ -112,15 +109,15 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: CircleAvatar(
-                      backgroundColor: BrandColors.shadeBlack.withValues(
+                      backgroundColor: context.colors.shadeBlack.withValues(
                         alpha: 0.6,
                       ),
                       child: IconButton(
                         onPressed: () {},
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.favorite_border,
                           size: 20,
-                          color: BrandColors.white,
+                          color: context.colors.white,
                         ),
                       ),
                     ),
@@ -128,15 +125,15 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
                     child: CircleAvatar(
-                      backgroundColor: BrandColors.shadeBlack.withValues(
+                      backgroundColor: context.colors.shadeBlack.withValues(
                         alpha: 0.6,
                       ),
                       child: IconButton(
                         onPressed: () {},
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.share_outlined,
                           size: 20,
-                          color: BrandColors.white,
+                          color: context.colors.white,
                         ),
                       ),
                     ),
@@ -158,8 +155,8 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              BrandColors.shadeBlack.withValues(alpha: 0.3),
-                              BrandColors.shadeBlack,
+                              context.colors.shadeBlack.withValues(alpha: 0.3),
+                              context.colors.shadeBlack,
                             ],
                             stops: const [0.0, 0.6, 1.0],
                           ),
@@ -178,9 +175,8 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                                 Expanded(
                                   child: Text(
                                     worker.name,
-                                    style: AppTextStyles.headingLarge.copyWith(
-                                      fontSize: 26,
-                                    ),
+                                    style: context.typography.headingLarge
+                                        .copyWith(fontSize: 26),
                                   ),
                                 ),
                                 if (worker.isAvailable)
@@ -190,7 +186,7 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: BrandColors.success.withValues(
+                                      color: context.colors.success.withValues(
                                         alpha: 0.2,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
@@ -201,18 +197,19 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                                         Container(
                                           width: 6,
                                           height: 6,
-                                          decoration: const BoxDecoration(
-                                            color: BrandColors.success,
+                                          decoration: BoxDecoration(
+                                            color: context.colors.success,
                                             shape: BoxShape.circle,
                                           ),
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'Available',
-                                          style: AppTextStyles.caption.copyWith(
-                                            color: BrandColors.success,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: context.typography.caption
+                                              .copyWith(
+                                                color: context.colors.success,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                         ),
                                       ],
                                     ),
@@ -231,7 +228,7 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                               ),
                               child: Text(
                                 catLabel,
-                                style: AppTextStyles.bodySmall.copyWith(
+                                style: context.typography.bodySmall.copyWith(
                                   color: catColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -253,25 +250,25 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                     children: [
                       _StatTile(
                         icon: Icons.star_rounded,
-                        iconColor: BrandColors.starYellow,
+                        iconColor: context.colors.starYellow,
                         value: worker.rating.toStringAsFixed(1),
                         label: 'Rating',
                       ),
                       _StatTile(
                         icon: Icons.rate_review_outlined,
-                        iconColor: BrandColors.info,
+                        iconColor: context.colors.info,
                         value: '${worker.reviewCount}',
                         label: 'Reviews',
                       ),
                       _StatTile(
                         icon: Icons.work_outline,
-                        iconColor: BrandColors.primaryGreen,
+                        iconColor: context.colors.primaryGreen,
                         value: '${worker.jobsCompleted}',
                         label: 'Jobs Done',
                       ),
                       _StatTile(
                         icon: Icons.currency_rupee,
-                        iconColor: BrandColors.warning,
+                        iconColor: context.colors.warning,
                         value: '${worker.hourlyRate.toInt()}',
                         label: 'Per Hour',
                       ),
@@ -287,12 +284,12 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('About', style: AppTextStyles.headingSmall),
+                      Text('About', style: context.typography.headingSmall),
                       const SizedBox(height: 10),
                       Text(
                         worker.bio,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: BrandColors.textSecondary,
+                        style: context.typography.bodyMedium.copyWith(
+                          color: context.colors.textSecondary,
                           height: 1.6,
                         ),
                       ),
@@ -308,7 +305,7 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Skills', style: AppTextStyles.headingSmall),
+                      Text('Skills', style: context.typography.headingSmall),
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
@@ -320,20 +317,20 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: BrandColors.primaryGreen.withValues(
+                              color: context.colors.primaryGreen.withValues(
                                 alpha: 0.1,
                               ),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: BrandColors.primaryGreen.withValues(
+                                color: context.colors.primaryGreen.withValues(
                                   alpha: 0.3,
                                 ),
                               ),
                             ),
                             child: Text(
                               skill,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: BrandColors.primaryGreen,
+                              style: context.typography.bodySmall.copyWith(
+                                color: context.colors.primaryGreen,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -350,7 +347,10 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-                    child: Text('Portfolio', style: AppTextStyles.headingSmall),
+                    child: Text(
+                      'Portfolio',
+                      style: context.typography.headingSmall,
+                    ),
                   ).animate().fadeIn(delay: 500.ms),
                 ),
                 SliverToBoxAdapter(
@@ -381,7 +381,10 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Service Areas', style: AppTextStyles.headingSmall),
+                      Text(
+                        'Service Areas',
+                        style: context.typography.headingSmall,
+                      ),
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
@@ -393,22 +396,22 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: BrandColors.lightGray,
+                              color: context.colors.lightGray,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.location_on_outlined,
                                   size: 14,
-                                  color: BrandColors.textSecondary,
+                                  color: context.colors.textSecondary,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   area,
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: BrandColors.textSecondary,
+                                  style: context.typography.bodySmall.copyWith(
+                                    color: context.colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -430,15 +433,15 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                     children: [
                       Text(
                         'Reviews (${reviews.length})',
-                        style: AppTextStyles.headingSmall,
+                        style: context.typography.headingSmall,
                       ),
                       if (reviews.length > 3)
                         TextButton(
                           onPressed: () {},
                           child: Text(
                             'See All',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: BrandColors.primaryGreen,
+                            style: context.typography.bodySmall.copyWith(
+                              color: context.colors.primaryGreen,
                             ),
                           ),
                         ),
@@ -464,10 +467,10 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
           // Bottom action bar
           bottomNavigationBar: Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            decoration: const BoxDecoration(
-              color: BrandColors.shadeBlack,
+            decoration: BoxDecoration(
+              color: context.colors.shadeBlack,
               border: Border(
-                top: BorderSide(color: BrandColors.divider, width: 0.5),
+                top: BorderSide(color: context.colors.divider, width: 0.5),
               ),
             ),
             child: Row(
@@ -487,12 +490,12 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
                     height: 52,
                     icon: _isStartingChat ? null : Icons.chat_bubble_outline,
                     child: _isStartingChat
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 18,
                             height: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: BrandColors.primaryGreen,
+                              color: context.colors.primaryGreen,
                             ),
                           )
                         : const Text(
@@ -530,18 +533,18 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
           ).animate().slideY(begin: 1, duration: 400.ms, curve: Curves.easeOut),
         );
       },
-      loading: () => const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      loading: () => Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
-          child: CircularProgressIndicator(color: BrandColors.primaryGreen),
+          child: CircularProgressIndicator(color: context.colors.primaryGreen),
         ),
       ),
-      error: (err, _) => const Scaffold(
-        backgroundColor: BrandColors.shadeBlack,
+      error: (err, _) => Scaffold(
+        backgroundColor: context.colors.shadeBlack,
         body: Center(
           child: Text(
             'Error loading profile',
-            style: TextStyle(color: BrandColors.error),
+            style: TextStyle(color: context.colors.error),
           ),
         ),
       ),
@@ -560,7 +563,7 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
     try {
       return AppConstants.categories.firstWhere((c) => c.id == id).color;
     } catch (_) {
-      return BrandColors.primaryGreen;
+      return context.colors.primaryGreen;
     }
   }
 
@@ -569,9 +572,9 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
     final provider = resolveImageProvider(pathOrUrl);
     if (provider == null) {
       return Container(
-        color: BrandColors.lightGray,
-        child: const Center(
-          child: Icon(Icons.person, size: 80, color: BrandColors.textMuted),
+        color: context.colors.lightGray,
+        child: Center(
+          child: Icon(Icons.person, size: 80, color: context.colors.textMuted),
         ),
       );
     }
@@ -589,12 +592,12 @@ class _WorkerProfileScreenState extends ConsumerState<WorkerProfileScreen> {
         child: provider != null
             ? Image(image: provider, fit: BoxFit.cover)
             : Container(
-                color: BrandColors.lightGray,
-                child: const Center(
+                color: context.colors.lightGray,
+                child: Center(
                   child: Icon(
                     Icons.image_not_supported_outlined,
                     size: 32,
-                    color: BrandColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ),
@@ -623,16 +626,22 @@ class _StatTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: BrandColors.lightGray,
+          color: context.colors.lightGray,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
           children: [
             Icon(icon, color: iconColor, size: 22),
             const SizedBox(height: 6),
-            Text(value, style: AppTextStyles.labelLarge.copyWith(fontSize: 16)),
+            Text(
+              value,
+              style: context.typography.labelLarge.copyWith(fontSize: 16),
+            ),
             const SizedBox(height: 2),
-            Text(label, style: AppTextStyles.caption.copyWith(fontSize: 9)),
+            Text(
+              label,
+              style: context.typography.caption.copyWith(fontSize: 9),
+            ),
           ],
         ),
       ),
@@ -651,7 +660,7 @@ class _ReviewCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: BrandColors.lightGray,
+        color: context.colors.lightGray,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -661,13 +670,13 @@ class _ReviewCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: BrandColors.surfaceLight,
+                backgroundColor: context.colors.surfaceLight,
                 backgroundImage: resolveImageProvider(review.reviewerPhoto),
                 child: resolveImageProvider(review.reviewerPhoto) == null
-                    ? const Icon(
+                    ? Icon(
                         Icons.person,
                         size: 18,
-                        color: BrandColors.textMuted,
+                        color: context.colors.textMuted,
                       )
                     : null,
               ),
@@ -678,11 +687,13 @@ class _ReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.reviewerName,
-                      style: AppTextStyles.labelLarge.copyWith(fontSize: 13),
+                      style: context.typography.labelLarge.copyWith(
+                        fontSize: 13,
+                      ),
                     ),
                     Text(
                       _timeAgo(review.createdAt),
-                      style: AppTextStyles.caption,
+                      style: context.typography.caption,
                     ),
                   ],
                 ),
@@ -693,7 +704,7 @@ class _ReviewCard extends StatelessWidget {
                     i < review.rating.floor()
                         ? Icons.star_rounded
                         : Icons.star_outline_rounded,
-                    color: BrandColors.starYellow,
+                    color: context.colors.starYellow,
                     size: 16,
                   );
                 }),
@@ -703,8 +714,8 @@ class _ReviewCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             review.comment,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: BrandColors.textSecondary,
+            style: context.typography.bodySmall.copyWith(
+              color: context.colors.textSecondary,
               height: 1.5,
             ),
           ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
+import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
-import 'package:sevaku/core/theme/text_styles.dart';
 import 'package:sevaku/core/constants/app_constants.dart';
 import 'package:sevaku/features/workers/widgets/worker_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,7 +61,9 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
       workers = workers.where((w) {
         return w.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
             w.category.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            w.skills.any((s) => s.toLowerCase().contains(_searchQuery.toLowerCase()));
+            w.skills.any(
+              (s) => s.toLowerCase().contains(_searchQuery.toLowerCase()),
+            );
       }).toList();
     }
 
@@ -96,11 +98,10 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: BrandColors.shadeBlack,
+      backgroundColor: context.colors.shadeBlack,
       appBar: AppBar(
-        backgroundColor: BrandColors.shadeBlack,
+        backgroundColor: context.colors.shadeBlack,
         title: Text(_categoryTitle),
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -121,12 +122,12 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Lexend',
-                color: BrandColors.white,
+                color: context.colors.white,
                 fontSize: 14,
               ),
-              cursorColor: BrandColors.primaryGreen,
+              cursorColor: context.colors.primaryGreen,
               decoration: InputDecoration(
                 hintText: 'Search workers, skills...',
                 prefixIcon: const Icon(Icons.search, size: 20),
@@ -150,17 +151,33 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
-                _SortChip('Top Rated', 'rating', _sortBy == 'rating',
-                    () => setState(() => _sortBy = 'rating')),
+                _SortChip(
+                  'Top Rated',
+                  'rating',
+                  _sortBy == 'rating',
+                  () => setState(() => _sortBy = 'rating'),
+                ),
                 const SizedBox(width: 8),
-                _SortChip('Price: Low', 'price_low', _sortBy == 'price_low',
-                    () => setState(() => _sortBy = 'price_low')),
+                _SortChip(
+                  'Price: Low',
+                  'price_low',
+                  _sortBy == 'price_low',
+                  () => setState(() => _sortBy = 'price_low'),
+                ),
                 const SizedBox(width: 8),
-                _SortChip('Price: High', 'price_high', _sortBy == 'price_high',
-                    () => setState(() => _sortBy = 'price_high')),
+                _SortChip(
+                  'Price: High',
+                  'price_high',
+                  _sortBy == 'price_high',
+                  () => setState(() => _sortBy = 'price_high'),
+                ),
                 const SizedBox(width: 8),
-                _SortChip('Most Reviews', 'reviews', _sortBy == 'reviews',
-                    () => setState(() => _sortBy = 'reviews')),
+                _SortChip(
+                  'Most Reviews',
+                  'reviews',
+                  _sortBy == 'reviews',
+                  () => setState(() => _sortBy = 'reviews'),
+                ),
               ],
             ),
           ).animate().fadeIn(delay: 100.ms),
@@ -169,29 +186,34 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
 
           // Worker list & Results count
           Expanded(
-            child: ref.watch(workersByCategoryProvider(_selectedCategory)).when(
-              data: (streamWorkers) {
-                final workers = _filterAndSortWorkers(streamWorkers);
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${workers.length} workers found',
-                          style: AppTextStyles.caption,
+            child: ref
+                .watch(workersByCategoryProvider(_selectedCategory))
+                .when(
+                  data: (streamWorkers) {
+                    final workers = _filterAndSortWorkers(streamWorkers);
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 4,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${workers.length} workers found',
+                              style: context.typography.caption,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: _isLoading
-                          ? const ShimmerList(itemCount: 6)
-                          : workers.isEmpty
+                        Expanded(
+                          child: _isLoading
+                              ? const ShimmerList(itemCount: 6)
+                              : workers.isEmpty
                               ? _buildEmptyState()
                               : RefreshIndicator(
-                                  color: BrandColors.primaryGreen,
-                                  backgroundColor: BrandColors.lightGray,
+                                  color: context.colors.primaryGreen,
+                                  backgroundColor: context.colors.lightGray,
                                   onRefresh: () async {
                                     setState(() => _isLoading = true);
                                     _simulateLoading();
@@ -201,35 +223,39 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                                     itemCount: workers.length,
                                     itemBuilder: (context, index) {
                                       return WorkerCard(
-                                        worker: workers[index],
-                                        onTap: () {
-                                          context.push(
-                                            '/customer/worker/${workers[index].uid}',
-                                          );
-                                        },
-                                      )
+                                            worker: workers[index],
+                                            onTap: () {
+                                              context.push(
+                                                '/customer/worker/${workers[index].uid}',
+                                              );
+                                            },
+                                          )
                                           .animate(
-                                              delay: Duration(
-                                                  milliseconds: 80 * index))
+                                            delay: Duration(
+                                              milliseconds: 80 * index,
+                                            ),
+                                          )
                                           .fadeIn()
                                           .slideY(begin: 0.05);
                                     },
                                   ),
                                 ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const ShimmerList(itemCount: 6),
-              error: (err, _) => AppErrorState(
-                message: 'Error loading workers',
-                onRetry: () {
-                  setState(() => _isLoading = true);
-                  _simulateLoading();
-                  ref.invalidate(workersByCategoryProvider(_selectedCategory));
-                },
-              ),
-            ),
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () => const ShimmerList(itemCount: 6),
+                  error: (err, _) => AppErrorState(
+                    message: 'Error loading workers',
+                    onRetry: () {
+                      setState(() => _isLoading = true);
+                      _simulateLoading();
+                      ref.invalidate(
+                        workersByCategoryProvider(_selectedCategory),
+                      );
+                    },
+                  ),
+                ),
           ),
         ],
       ),
@@ -248,7 +274,7 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BrandColors.cardDark,
+      backgroundColor: context.colors.cardDark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -265,17 +291,17 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: BrandColors.textMuted,
+                      color: context.colors.textMuted,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text('Filters', style: AppTextStyles.headingMedium),
+                Text('Filters', style: context.typography.headingMedium),
                 const SizedBox(height: 24),
 
                 // Category
-                Text('Category', style: AppTextStyles.labelLarge),
+                Text('Category', style: context.typography.labelLarge),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
@@ -289,14 +315,16 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                         setState(() => _selectedCategory = null);
                       },
                     ),
-                    ...AppConstants.categories.map((cat) => _FilterChip(
-                          label: cat.label,
-                          isSelected: _selectedCategory == cat.id,
-                          onTap: () {
-                            setModalState(() {});
-                            setState(() => _selectedCategory = cat.id);
-                          },
-                        )),
+                    ...AppConstants.categories.map(
+                      (cat) => _FilterChip(
+                        label: cat.label,
+                        isSelected: _selectedCategory == cat.id,
+                        onTap: () {
+                          setModalState(() {});
+                          setState(() => _selectedCategory = cat.id);
+                        },
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -304,7 +332,7 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                 // Min Rating
                 Text(
                   'Min Rating: ${_minRating.toStringAsFixed(1)}',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ),
                 const SizedBox(height: 8),
                 Slider(
@@ -312,8 +340,8 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                   min: 0,
                   max: 5,
                   divisions: 10,
-                  activeColor: BrandColors.primaryGreen,
-                  inactiveColor: BrandColors.lightGray,
+                  activeColor: context.colors.primaryGreen,
+                  inactiveColor: context.colors.lightGray,
                   onChanged: (v) {
                     setModalState(() {});
                     setState(() => _minRating = v);
@@ -323,7 +351,7 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                 // Max Price
                 Text(
                   'Max Price: ₹${_maxPrice.toInt()}/hr',
-                  style: AppTextStyles.labelLarge,
+                  style: context.typography.labelLarge,
                 ),
                 const SizedBox(height: 8),
                 Slider(
@@ -331,8 +359,8 @@ class _WorkerListScreenState extends ConsumerState<WorkerListScreen> {
                   min: 100,
                   max: 1000,
                   divisions: 18,
-                  activeColor: BrandColors.primaryGreen,
-                  inactiveColor: BrandColors.lightGray,
+                  activeColor: context.colors.primaryGreen,
+                  inactiveColor: context.colors.lightGray,
                   onChanged: (v) {
                     setModalState(() {});
                     setState(() => _maxPrice = v);
@@ -373,18 +401,22 @@ class _SortChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? BrandColors.primaryGreen.withValues(alpha: 0.15)
-              : BrandColors.lightGray,
+              ? context.colors.primaryGreen.withValues(alpha: 0.15)
+              : context.colors.lightGray,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? BrandColors.primaryGreen : Colors.transparent,
+            color: isSelected
+                ? context.colors.primaryGreen
+                : Colors.transparent,
             width: 1,
           ),
         ),
         child: Text(
           label,
-          style: AppTextStyles.caption.copyWith(
-            color: isSelected ? BrandColors.primaryGreen : BrandColors.textSecondary,
+          style: context.typography.caption.copyWith(
+            color: isSelected
+                ? context.colors.primaryGreen
+                : context.colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 11,
           ),
@@ -413,17 +445,21 @@ class _FilterChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? BrandColors.primaryGreen.withValues(alpha: 0.15)
-              : BrandColors.lightGray,
+              ? context.colors.primaryGreen.withValues(alpha: 0.15)
+              : context.colors.lightGray,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? BrandColors.primaryGreen : Colors.transparent,
+            color: isSelected
+                ? context.colors.primaryGreen
+                : Colors.transparent,
           ),
         ),
         child: Text(
           label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: isSelected ? BrandColors.primaryGreen : BrandColors.textSecondary,
+          style: context.typography.bodySmall.copyWith(
+            color: isSelected
+                ? context.colors.primaryGreen
+                : context.colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 12,
           ),

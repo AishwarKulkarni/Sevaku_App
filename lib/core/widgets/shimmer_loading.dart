@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sevaku/core/theme/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:sevaku/core/theme/brand_colors.dart';
 
 class ShimmerLoading extends StatelessWidget {
   final double width;
@@ -17,13 +17,13 @@ class ShimmerLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: BrandColors.lightGray,
-      highlightColor: BrandColors.surfaceLight,
+      baseColor: context.colors.lightGray,
+      highlightColor: context.colors.surfaceLight,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: BrandColors.lightGray,
+          color: context.colors.lightGray,
           borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),
@@ -37,13 +37,13 @@ class ShimmerWorkerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: BrandColors.lightGray,
-      highlightColor: BrandColors.surfaceLight,
+      baseColor: context.colors.lightGray,
+      highlightColor: context.colors.surfaceLight,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: BrandColors.lightGray,
+          color: context.colors.lightGray,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -51,8 +51,8 @@ class ShimmerWorkerCard extends StatelessWidget {
             Container(
               width: 60,
               height: 60,
-              decoration: const BoxDecoration(
-                color: BrandColors.surfaceLight,
+              decoration: BoxDecoration(
+                color: context.colors.surfaceLight,
                 shape: BoxShape.circle,
               ),
             ),
@@ -65,7 +65,7 @@ class ShimmerWorkerCard extends StatelessWidget {
                     width: 140,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: BrandColors.surfaceLight,
+                      color: context.colors.surfaceLight,
                       borderRadius: BorderRadius.circular(7),
                     ),
                   ),
@@ -74,7 +74,7 @@ class ShimmerWorkerCard extends StatelessWidget {
                     width: 100,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: BrandColors.surfaceLight,
+                      color: context.colors.surfaceLight,
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -83,7 +83,7 @@ class ShimmerWorkerCard extends StatelessWidget {
                     width: 80,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: BrandColors.surfaceLight,
+                      color: context.colors.surfaceLight,
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
