@@ -1,4 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sevaku/router/app_router.dart';
 import 'package:sevaku/services/api_service.dart';
 
 class NotificationService {
@@ -35,15 +38,34 @@ class NotificationService {
   }
 
   void _handleForegroundMessage(RemoteMessage message) {
-    // TODO: Show an in-app notification (snackbar, overlay, etc.)
-    // ignore: avoid_print
-    print('Foreground message: ${message.notification?.title}');
+    // Show an in-app notification (snackbar)
+    final context = rootNavigatorKey.currentContext;
+    if (context != null && message.notification != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message.notification!.title ?? 'New Notification'),
+          action: SnackBarAction(
+            label: 'Dismiss',
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _handleBackgroundMessage(RemoteMessage message) {
-    // TODO: Navigate to the relevant screen based on message data
-    // ignore: avoid_print
-    print('Background message opened: ${message.data}');
+    // Navigate to the relevant screen based on message data
+    final context = rootNavigatorKey.currentContext;
+    if (context != null && message.data.containsKey('route')) {
+      final route = message.data['route'] as String;
+      context.go(route);
+    } else {
+      // Fallback action or just logging
+      // ignore: avoid_print
+      print('Background message opened, no route provided: ${message.data}');
+    }
   }
 
   /// Subscribe to a topic (e.g., booking updates)

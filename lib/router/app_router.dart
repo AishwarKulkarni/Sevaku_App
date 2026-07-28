@@ -22,6 +22,7 @@ import 'package:sevaku/features/auth/providers/auth_provider.dart';
 import 'package:sevaku/core/constants/app_constants.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final rootNavigatorKey = _rootNavigatorKey;
 
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
