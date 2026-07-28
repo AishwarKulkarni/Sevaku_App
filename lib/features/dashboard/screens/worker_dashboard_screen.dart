@@ -206,7 +206,6 @@ class WorkerDashboardScreen extends ConsumerWidget {
                     ),
                   ),
 
-                  // Earnings Chart Placeholder
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
